@@ -12,7 +12,7 @@ const ShopNavigate = () => {
             <div className='pt-8'>
                 {shopNavigateItems.map(item => {
                     return (
-                        <Disclosure className='border-b-[1px] border-red-600'>
+                        <Disclosure className='border-b-[1px] border-red-600' key={item.id}>
                             {({ open }) => (
                                 <>
                                     <Disclosure.Button className="flex w-full text-gray-700 justify-between py-2 mb-1  text-left text-lg
@@ -26,7 +26,7 @@ const ShopNavigate = () => {
                                     <Disclosure.Panel className="px-4  text-base text-gray-700 border-l-[1px] ">
                                         {item.products.map(product => {
                                             return (
-                                                <div className=' py-2 '>{product.name}<span className='text-gray-400'> ({product.count})</span></div>
+                                                <div key={product.id} className=' py-2 '>{product.name}<span className='text-gray-400'> ({product.count})</span></div>
                                             )
                                         })}
                                     </Disclosure.Panel>

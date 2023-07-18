@@ -7,7 +7,7 @@ const BaseButton = ({ title, type, className, handleClick }) => {
         <button
             onClick={handleClick}
             className=
-            {twMerge('bg-primary hover:opacity-80 ', className)}
+            {twMerge('bg-primary hover:opacity-80', className)}
             type={type}
         >
             {title}

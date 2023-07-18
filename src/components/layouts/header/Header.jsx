@@ -8,8 +8,14 @@ import { ImUser } from 'react-icons/im'
 import { BiSearch } from 'react-icons/bi'
 import { navigateItem } from './constant'
 import { Link } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { Menu } from '@headlessui/react'
+import { logoutSuccess } from '../../../features/auth/state/AuthSlice'
 
 const Header = () => {
+    const currentUser = useSelector(state => state.auth.currentUser)
+    const dispatch = useDispatch()
+
 
     const [showHeader, setShowHeader] = useState('')
 
@@ -60,13 +66,35 @@ const Header = () => {
                     <BiSearch size={22} className='text-gray-700 hover:cursor-pointer' />
                 </div>
                 <div className='flex pr-4 space-x-4'>
-                    <div className='pr-2'>
-                        <Link to='/login'>
-                            <div className='border-2 border-gray-400 rounded-full px-[7px] py-[7px] hover:bg-purple-600 hover:cursor-pointer group'>
-                                <ImUser className='text-gray-400 group-hover:text-white' />
-                            </div>
-                        </Link>
-                    </div>
+
+                    {currentUser ? (<div className='pt-1'>
+                        <Menu>
+
+                            <Menu.Button>{currentUser.username}</Menu.Button>
+                            <Menu.Items className="bg-slate-100">
+                                <Menu.Item>
+                                    {({ active }) => (
+                                        <div
+                                            className={`${active && 'bg-primary cursor-pointer'}`}
+                                            onClick={() => dispatch(logoutSuccess())}
+                                        >
+                                            Logout
+                                        </div>
+                                    )}
+                                </Menu.Item>
+
+                            </Menu.Items>
+                        </Menu>
+                    </div>) : (
+                        <div className='pr-2'>
+                            <Link to='/login'>
+                                <div className='border-2 border-gray-400 rounded-full px-[7px] py-[7px] hover:bg-purple-600 hover:cursor-pointer group'>
+                                    <ImUser className='text-gray-400 group-hover:text-white' />
+                                </div>
+                            </Link>
+
+                        </div>
+                    )}
                     <div className='pl-[20px] border-l-2'>
                         <Link to='/cart'>
                             <div className='border-2 border-gray-400 rounded-full px-[7px] py-[7px] hover:bg-purple-600 hover:cursor-pointer group'>
