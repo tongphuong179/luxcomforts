@@ -19,7 +19,7 @@ const HeaderAdmin = () => {
                     <AiOutlineMail size='28' />
                 </div>
                 <div className='flex items-center space-x-6'>
-                    <p>Tran Cong Minh</p>
+                    <p>Tong Phuong</p>
                     <IoPerson size={28} />
                 </div>
             </div>
