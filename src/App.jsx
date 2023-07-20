@@ -16,6 +16,13 @@ import ProductDetailScreen from "./features/product-detail/ProductDetailScreen"
 import { useState } from "react"
 import Protected from "./features/auth/Protected"
 import { useSelector } from "react-redux"
+import LayoutAdmin from "./components/admin/LayoutAdmin"
+import UserAdminScreen from "./features/admin/features/UserAdminScreen"
+import ProductAdminScreen from "./features/admin/features/ProductAdminScreen"
+import CategoryAdminScreen from "./features/admin/features/CategoryAdminScreen"
+import DiscountAdminScreen from "./features/admin/features/DiscountAdminScreen"
+import VoucherAdminScreen from "./features/admin/features/VoucherAdminScreen"
+import OrderAdminScreen from "./features/admin/features/OrderAdminScreen"
 
 function App() {
 
@@ -25,21 +32,25 @@ function App() {
 
     <QueryClientProvider client={queryClient}>
       <Routes>
-        <Route element={<Layout />}>
+        <Route path="/" element={<Layout />}>
           <Route path="/" element={<HomeScreen />} />
           <Route path="/shop" element={<ShopScreen />} />
           <Route path="/product/:productId" element={<ProductDetailScreen />} />
-          <Route path="/about" element={<HomeScreen />} />
+          <Route path="/about" element={<AboutScreen />} />
           <Route path="/contact" element={<ContactScreen />} />
-          <Route path='/login' element={<LoginScreen />} />
-          <Route path='/register' element={<RegisterScreen />} />
-          <Route path='/cart'
-            element={
-              <Protected isLoggedIn={isLoggedIn}>
-                <CartScreen />
-              </Protected>
-            } />
+          <Route path="/login" element={<LoginScreen />} />
+          <Route path="/register" element={<RegisterScreen />} />
+          <Route path="/cart" element={<Protected isLoggedIn={isLoggedIn}><CartScreen /></Protected>} />
+        </Route>
 
+        {/* Add curly braces to enclose LayoutAdmin */}
+        <Route path="/admin" element={<LayoutAdmin />}>
+          <Route path="user" element={<UserAdminScreen />} />
+          <Route path="product" element={<ProductAdminScreen />} />
+          <Route path="category" element={<CategoryAdminScreen />} />
+          <Route path="discount" element={<DiscountAdminScreen />} />
+          <Route path="voucher" element={<VoucherAdminScreen />} />
+          <Route path="order" element={<OrderAdminScreen />} />
         </Route>
       </Routes>
     </QueryClientProvider>

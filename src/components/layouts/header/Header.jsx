@@ -14,6 +14,7 @@ import { logoutSuccess } from '../../../features/auth/state/AuthSlice'
 
 const Header = () => {
     const currentUser = useSelector(state => state.auth.currentUser)
+    const carts = useSelector(state => state.cart.carts)
     const dispatch = useDispatch()
 
 
@@ -95,11 +96,14 @@ const Header = () => {
 
                         </div>
                     )}
-                    <div className='pl-[20px] border-l-2'>
+                    <div className='pl-[20px] border-l-2 relative'>
                         <Link to='/cart'>
                             <div className='border-2 border-gray-400 rounded-full px-[7px] py-[7px] hover:bg-purple-600 hover:cursor-pointer group'>
                                 <ImCart className='text-gray-400 group-hover:text-white' />
                             </div>
+                            {carts.length > 0 && (<span className='absolute top-[-6px] right-[-12px] px-[6px] rounded-full text-white bg-red-600 border-[1px]'>
+                                {carts.length}
+                            </span>)}
                         </Link>
                     </div>
                 </div>

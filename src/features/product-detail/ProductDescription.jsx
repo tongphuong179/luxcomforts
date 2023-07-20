@@ -1,17 +1,32 @@
 import React from 'react'
 import BaseButton from '../../components/button/BaseButton'
 import { useState } from 'react'
-import { useDispatch } from 'react-redux'
-import { setCart } from '../cart/state/CartSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { addCart } from '../cart/state/CartSlice'
 
 const ProductDescription = ({ description }) => {
 
     const [count, setcount] = useState(1)
+    const carts = useSelector(state => state.cart.carts)
+
     const dispatch = useDispatch()
 
-    const handleAddToCart = () => {
-        const product = { ...description, quantity: count }
-        dispatch(setCart(product))
+    const handleAddToCart = (id) => {
+        const index = carts.findIndex(item => item.id === id)
+        const productCarts = [...carts]
+
+        if (index !== -1) {
+            productCarts[index] = {
+                ...productCarts[index],
+                quantity: productCarts[index].quantity + count
+            }
+        }
+        else {
+            const product = { ...description, quantity: count }
+            productCarts.push(product)
+        }
+
+        dispatch(addCart(productCarts))
     }
     return (
         <div className='pt-20'>
@@ -48,7 +63,7 @@ const ProductDescription = ({ description }) => {
                         <button className='py-2 px-2 border-[1px]' onClick={() => setcount(count + 1)}>+</button>
                     </div>
                     <div>
-                        <BaseButton handleClick={() => handleAddToCart()} title="ADD TO CART" className="px-3 py-2 bg-red-500 rounded-xl text-white" />
+                        <BaseButton handleClick={() => handleAddToCart(description.id)} title="ADD TO CART" className="px-3 py-2 bg-red-500 rounded-xl text-white" />
                     </div>
 
                 </div>

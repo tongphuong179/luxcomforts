@@ -1,8 +1,9 @@
 import React from 'react'
 import { getCurrentUser } from '../../services/getToken'
-import { homeTeam } from './constant'
+import { departmentItems, homeTeam } from './constant'
 import BaseButton from '../../components/button/BaseButton'
 import { useNavigate } from 'react-router-dom'
+import HomeSlider from './HomeSlider'
 
 const HomeScreen = () => {
     const token = getCurrentUser()
@@ -10,7 +11,26 @@ const HomeScreen = () => {
     const navigate = useNavigate()
     return (
         <div>
-            <div className='text-center bg-primary py-[150px] px-[540px]'>
+            <div className='pb-[60px]'>
+                <HomeSlider />
+            </div>
+            <div>
+                <p className='pb-8 text-center text-xl text-gray-700'>SHOP BY DEPARTMENT</p>
+                <div className='grid  grid-cols-4 gap-4 px-[320px]'>
+                    {departmentItems.map(item => {
+                        return (
+                            <div key={item.id} className='bg-white shadow-xl hover:cursor-pointer group transition transform hover:-translate-y-1 duration-300 '>
+                                <img className='group-hover:h-[75%] w-full  duration-500' src={item.link} alt="" />
+                                <p className='text-center py-5 text-sm text-gray-600'>{item.title}</p>
+                            </div>
+                        )
+                    })}
+                </div>
+            </div>
+            <div>
+
+            </div>
+            <div className='text-center bg-primary py-[100px] mt-10 px-[540px]'>
                 <p className='text-6xl text-white'>About Us</p>
                 <p className='text-xl leading-7 pt-10 text-white'>
                     Welcome to Luxcomforts.com. Finding the perfect piece for your home doesn’t have to
