@@ -28,17 +28,23 @@ const ListProduct = () => {
     return (
         <div>
             <div className='grid grid-cols-3 gap-3'>
-                {data?.map(product => {
+                {data?.map((productData) => {
+                    const { product, price_discount } = productData;
+
                     return (
-                        <ProductCard key={product.id} product={product} />
-                    )
+                        <ProductCard
+                            key={product.id}
+                            product={product}
+                            discountPrice={price_discount}
+                        />
+                    );
                 })}
             </div>
             <div className='flex items-center justify-center py-10 cursor-pointer'>
                 <Pagination />
             </div>
         </div>
-    )
+    );
 }
 
 export default ListProduct

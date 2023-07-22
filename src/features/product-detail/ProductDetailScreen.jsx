@@ -14,18 +14,25 @@ const ProductDetailScreen = () => {
     return (
         <div>
             <div className=" grid grid-cols-2 gap-6 px-[380px]">
-                {data && <ProductImage product={data} />}
-                {data && <ProductDescription description={data} />}
+                {data && <ProductImage product={data.product} />}
+                {data && <ProductDescription description={data.product} price_discount={data.price_discount} />}
             </div>
 
             <div className='px-[380px]'>
+                {/* This section seems to display some product information. */}
                 <div className='flex space-x-4'>
                     <p>PRODUCT SPECS</p>
                     <p>SHIPPING INFO</p>
                 </div>
-                <p className='pt-5'>Our garden pot offers great and new ideas of nurturing your favorite flowers, fruits and vegetables around your home. It features a sturdy, outstanding band for firmness and durability. This planting pot is creatively constructed from pine wood material. Definitely, it comes with elegant look and style that will seamlessly blend with the visuals of your deck, patio or entry way. Wood construction Lightweight and durable Measures 12″ X 7″</p>
+                {/* Displaying the product description from `data.product`. */}
+                <p className='pt-5'>{data && data.product.description}</p>
+                {/* Displaying the discount price from `data.discount_price`. */}
+                {data && data.price_discount && (
+                    <p className='pt-5'>Discounted Price: {data.price_discount} vnđ</p>
+                )}
             </div>
             <div className='px-[380px]'>
+                {/* The `ProductSimilar` component, which presumably displays similar products, is commented out. */}
                 {/* <ProductSimilar /> */}
             </div>
         </div>
