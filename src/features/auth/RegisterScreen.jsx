@@ -4,18 +4,41 @@ import BaseButton from '../../components/button/BaseButton'
 import TextInput from '../../components/input/TextInput'
 import { Link } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
+import { RegisterUser } from './services/Register'
+import toast, { Toaster } from 'react-hot-toast'
+
+
 
 
 const RegisterScreen = () => {
-    const { register, handleSubmit, watch, formState: { errors } } = useForm()
-    
-    const mutation = useMutation()
+    const { register, reset, handleSubmit, watch, formState: { errors } } = useForm()
+
+
+    const mutation = useMutation(RegisterUser, {
+        onSuccess(data) {
+            toast.success("Bạn đã đăng ký tài khoản thành công")
+            console.log(data)
+        },
+        onError() {
+            console.log("đăng ký thất bại")
+        }
+    })
 
     const onSubmit = (data) => {
-        console.log(data)
+        mutation.mutate(data)
+        reset({
+            name: '',
+            phone: '',
+            username: '',
+            email: '',
+            password: '',
+            address: ''
+        })
     }
     return (
         <div className='shadow-lg h-[800px] w-[600px] mx-auto my-14 bg-gray-100'>
+            <div><Toaster position="top-center"
+                reverseOrder={false} /></div>
             <div className="flex flex-col space-y-8 pt-8">
                 <p className='text-center text-3xl font-medium text-primary'>Create Account</p>
                 <p className='text-center'>Please register using account detail bellow.</p>

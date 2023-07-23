@@ -1,11 +1,9 @@
 import axios from "axios";
+import { axiosInstance } from "../../../services/axios.config";
 
 export const login = async (userData) => {
   try {
-    const res = await axios.post(
-      "http://localhost:9090/api/users/login",
-      userData
-    );
+    const res = await axiosInstance.post("/users/login", userData);
     return res.data;
   } catch (error) {
     throw new Error(error.response.data);

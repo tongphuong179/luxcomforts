@@ -7,9 +7,10 @@ import TextInput from '../input/TextInput'
 
 const HeaderAdmin = () => {
     return (
-        <div className=' py-6 pr-[100px] pl-[20px] flex items-center justify-between border-b-2 border-gray-300'>
-            <div className='flex items-center space-x-8 relative'>
-                <p className='text-xl text-gray-600'>ADMIN MANAGER </p>
+        <div className=' py-6 pr-[100px] bg-slate-200 pl-[20px] flex items-center justify-between border-b-2 border-gray-300'>
+
+            <div className='flex items-center space-x-[50px] relative'>
+                <img width={200} src="https://luxcomforts.com/wp-content/uploads/2021/05/luxcomforts_logo.png" alt="" />
                 <TextInput className='py-2 ml-12' placeholder='Seacrh' />
                 <AiOutlineSearch size={24} className='absolute right-1' />
             </div>

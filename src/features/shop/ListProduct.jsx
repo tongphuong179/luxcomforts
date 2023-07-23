@@ -10,19 +10,7 @@ const ListProduct = () => {
 
     const navigate = useNavigate()
 
-    // useEffect(() => {
-    //     const getAllProduct = async () => {
-    //         try {
-    //             const res = await axios.get("http://localhost:9090/api/products");
-    //             console.log(res.data)
-    //             return res.data;
 
-    //         } catch (error) {
-    //             throw new Error(error.response.data);
-    //         }
-    //     };
-    //     getAllProduct()
-    // }, [])
     const { data } = useQuery({ queryKey: ['products'], queryFn: getAllProduct })
     console.log(data)
     return (
@@ -32,12 +20,14 @@ const ListProduct = () => {
                     const { product, price_discount } = productData;
 
                     return (
+
                         <ProductCard
                             key={product.id}
                             product={product}
                             discountPrice={price_discount}
                         />
                     );
+
                 })}
             </div>
             <div className='flex items-center justify-center py-10 cursor-pointer'>

@@ -15,7 +15,10 @@ const ProductDetailScreen = () => {
         <div>
             <div className=" grid grid-cols-2 gap-6 px-[380px]">
                 {data && <ProductImage product={data.product} />}
+
                 {data && <ProductDescription description={data.product} price_discount={data.price_discount} />}
+
+
             </div>
 
             <div className='px-[380px]'>

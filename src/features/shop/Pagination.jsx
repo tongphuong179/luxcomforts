@@ -8,8 +8,8 @@ const Pagination = () => {
                 <li className='px-[4px] py-1 border-[2px] rounded-full text-gray-500 font-medium'>
                     <BsChevronLeft size={20} className='text-gray-500' />
                 </li>
-                <li className='px-[11px] py-1 border-[2px] rounded-full text-gray-500 font-medium'>1</li>
-                <li className='px-[11px] py-1 border-[2px] rounded-full text-gray-500 font-medium bg-primary text-white'>2</li>
+                <li className='px-[11px] py-1 border-[2px] rounded-full text-gray-500 font-medium bg-primary text-white' >1</li>
+                <li className='px-[11px] py-1 border-[2px] rounded-full text-gray-500 font-medium '>2</li>
                 <li className='px-[11px] py-1 border-[2px] rounded-full text-gray-500 font-medium'>3</li>
                 <li className='px-[11px] py-1 border-[2px] rounded-full text-gray-500 font-medium'>4</li>
                 <li className='px-[11px] py-1 border-[2px] rounded-full text-gray-500 font-medium'>5</li>

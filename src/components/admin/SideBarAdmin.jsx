@@ -9,7 +9,6 @@ import { GiBuyCard } from 'react-icons/gi';
 
 const SidebarLink = ({ to, children }) => {
     const location = useLocation();
-    console.log(location.pathname.substring(7));
 
     // Kiểm tra xem địa chỉ URL hiện tại có khớp với đường dẫn trong `to` của `Link` hay không
     const isActive = location.pathname.substring(7) === `${to}`;
@@ -28,10 +27,8 @@ const SidebarLink = ({ to, children }) => {
 
 const SideBarAdmin = () => {
     return (
-        <div className='h-[100vh] w-[317px] border-r-[2px] border-gray-300'>
-            <div className='pt-2 pb-[18px] pl-6 w-full border-b-[2px] border-gray-300'>
-                <img width={200} src="https://luxcomforts.com/wp-content/uploads/2021/05/luxcomforts_logo.png" alt="" />
-            </div>
+        <div className='h-[100vh]  border-r-2 border-gray-300'>
+
 
             <div className='pt-[80px] space-y-8'>
                 <SidebarLink to='user'>

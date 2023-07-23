@@ -6,9 +6,9 @@ const ProductCard = ({ product, discountPrice }) => { // Updated to accept `disc
     const navigate = useNavigate();
 
     return (
-        <div className='relative group' onClick={() => navigate(`/product/${product.id}`)}>
+        <div className='relative group' onClick={() => navigate(`/product/${product.product.id}`)}>
             <div className=''>
-                <img src={product.mainImage} alt="card" className='w-full h-[15vw]' />
+                <img src={product.product.mainImage} alt="card" className='w-full h-[15vw]' />
             </div>
             {discountPrice && ( // Render the discount price badge only if there's a discountPrice
                 <div className='absolute top-8 left-2 px-[6px] py-[12px] border-[1px] rounded-full bg-red-600'>
@@ -19,9 +19,10 @@ const ProductCard = ({ product, discountPrice }) => { // Updated to accept `disc
                 <BaseButton title="QUICK VIEW" className='text-white px-[98px] py-2' />
             </div>
             <div>
-                <p className='text-sm text-gray-500 text-center'>{product.name}</p>
-                <p className="text-base font-light pt-1">{product.description}</p>
+                <p className='text-sm text-gray-500 text-center'>{product.product.name}</p>
+                <p className="text-base font-light pt-1">{product.product.description}</p>
                 <div className='flex items-center space-x-2'>
+
                     {discountPrice ? ( // Render the discounted price if discountPrice is available
                         <>
                             <p className='font-light text-gray-500 line-through'>{product.price}</p>
@@ -30,6 +31,7 @@ const ProductCard = ({ product, discountPrice }) => { // Updated to accept `disc
                     ) : (
                         <p>{product.price} vnđ</p>
                     )}
+
                 </div>
                 <p className='font-light text-gray-600'>or 4 payments of $23.51 with</p>
                 <button>

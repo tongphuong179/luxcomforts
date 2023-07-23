@@ -1,9 +1,9 @@
 import axios from "axios";
 
-export const register = async (userRegisterData) => {
+export const RegisterUser = async (userRegisterData) => {
   try {
     const res = await axios.post(
-      "http://localhost:9090/api/users/login",
+      "http://localhost:9090/api/users/add",
       userRegisterData
     );
     return res.data;
