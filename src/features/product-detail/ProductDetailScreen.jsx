@@ -9,6 +9,7 @@ import { getProductById } from './services/getProductById'
 const ProductDetailScreen = () => {
     const { productId } = useParams()
 
+
     const { data } = useQuery({ queryKey: ['product', productId], queryFn: () => getProductById(productId) })
     console.log(data);
     return (

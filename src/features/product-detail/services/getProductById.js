@@ -5,7 +5,9 @@ import { getCurrentUser } from "../../../services/getToken";
 
 export const getProductById = async (productId) => {
   try {
-    const res = await axiosInstance.get(`/products/product/${productId},`);
+    const res = await axiosInstance.get(
+      `http://localhost:9090/api/products/product/${productId}`
+    );
     console.log(res.data);
     return res.data;
   } catch (error) {
