@@ -6,6 +6,7 @@ import clsx from 'clsx'
 const TextInput = React.forwardRef(
     (
         {
+            type,
             className,
             label,
             placeholder,
@@ -19,7 +20,7 @@ const TextInput = React.forwardRef(
                 {label && <Label data={label} />}
                 <input
                     ref={ref}
-                    type="text"
+                    type={type}
                     placeholder={placeholder}
                     className={twMerge('border border-gray-400 p-[9.5px] outline-none  rounded-md bg-gray-200  hover:border-neutral-600 focus:border-neutral-500 focus:bg-white', className)}
                     {...props}

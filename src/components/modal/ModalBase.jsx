@@ -1,20 +1,18 @@
 import { Dialog, Transition } from '@headlessui/react'
-import React, { Fragment } from 'react'
+import { Fragment, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { closeModal } from './state/ModalSlice'
+import { twMerge } from 'tailwind-merge'
 
-const ModalLogin = () => {
-
-    const isOpen = useSelector((state) => state.modal.isOpen)
+export default function ModalBase({ children, className }) {
+    const isOpen = useSelector(state => state.modal.isOpen)
     const dispatch = useDispatch()
     return (
         <>
-            <Transition appear show={isOpen} as={Fragment}>
-                <Dialog
-                    as="div"
-                    className="relative z-[60]"
-                    onClose={() => dispatch(closeModal())}
-                >
 
+
+            <Transition appear show={isOpen} as={Fragment}>
+                <Dialog as="div" className="relative z-10" onClose={() => dispatch(closeModal())}>
                     <Transition.Child
                         as={Fragment}
                         enter="ease-out duration-300"
@@ -24,10 +22,11 @@ const ModalLogin = () => {
                         leaveFrom="opacity-100"
                         leaveTo="opacity-0"
                     >
-                        <div className="fixed inset-0 bg-black bg-opacity-25" />
+                        <div className="fixed inset-0 bg-black bg-opacity-70" />
                     </Transition.Child>
-                    <div>
-                        <div>
+
+                    <div className="fixed inset-0 overflow-y-auto">
+                        <div className="flex min-h-full items-center justify-center p-4 text-center">
                             <Transition.Child
                                 as={Fragment}
                                 enter="ease-out duration-300"
@@ -37,10 +36,9 @@ const ModalLogin = () => {
                                 leaveFrom="opacity-100 scale-100"
                                 leaveTo="opacity-0 scale-95"
                             >
-                                <Dialog.Panel>
-
+                                <Dialog.Panel className={twMerge(`transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all`, className)}>
+                                    {children}
                                 </Dialog.Panel>
-
                             </Transition.Child>
                         </div>
                     </div>
@@ -49,5 +47,3 @@ const ModalLogin = () => {
         </>
     )
 }
-
-export default ModalLogin
