@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { closeModal } from './state/ModalSlice'
 import { twMerge } from 'tailwind-merge'
 
-export default function ModalBase({ children, className }) {
+export default function ModalBase({ children, className, handleClose }) {
     const isOpen = useSelector(state => state.modal.isOpen)
     const dispatch = useDispatch()
     return (
@@ -12,7 +12,7 @@ export default function ModalBase({ children, className }) {
 
 
             <Transition appear show={isOpen} as={Fragment}>
-                <Dialog as="div" className="relative z-10" onClose={() => dispatch(closeModal())}>
+                <Dialog as="div" className="relative z-10" onClose={handleClose ? handleClose : () => dispatch(closeModal())}>
                     <Transition.Child
                         as={Fragment}
                         enter="ease-out duration-300"

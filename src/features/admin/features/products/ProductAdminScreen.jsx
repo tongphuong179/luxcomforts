@@ -23,8 +23,9 @@ const ProductAdminScreen = () => {
     const [modalAdd, setModalAdd] = useState('')
     const [modalDelete, setModalDelete] = useState('')
 
-    const handleUpdateProduct = () => {
-
+    const handleUpdateProduct = (product) => {
+        setModalAdd('UPDATE')
+        dispatch(openModal(product))
 
     }
 
@@ -81,7 +82,7 @@ const ProductAdminScreen = () => {
                                                 <IoSettingsSharp size={30} className="ml-4 text-slate-700 hover:text-slate-500 cursor-pointer" />
                                             } className='space-y-1'>
 
-                                                <BaseButton handleClick={() => handleUpdateProduct(product.product.id)} title='Sửa' className='px-2 z-50 py-1 rounded-lg bg-slate-600 text-white ' />
+                                                <BaseButton handleClick={() => handleUpdateProduct(product.product)} title='Sửa' className='px-2 z-50 py-1 rounded-lg bg-slate-600 text-white ' />
 
                                                 <BaseButton handleClick={() => handleDeleteProduct(product.product.id)} title='Xóa' className='px-2 z-50 py-1 rounded-lg bg-slate-600 text-white' />
 
@@ -95,7 +96,7 @@ const ProductAdminScreen = () => {
                 </table>
             </div>
 
-            {modalAdd === "ADD" ? <ModalProduct /> : <ModalDeleteProduct />}
+            {modalAdd === "DELETE" ? <ModalDeleteProduct /> : <ModalProduct />}
 
 
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect, Fragment } from 'react'
 import ModalBase from '../../../../components/modal/ModalBase'
 import TextInput from '../../../../components/input/TextInput';
 import BaseButton from '../../../../components/button/BaseButton';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { closeModal } from '../../../../components/modal/state/ModalSlice';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -14,15 +14,19 @@ import { useForm, Controller } from 'react-hook-form';
 import { twMerge } from 'tailwind-merge';
 import { createProduct } from './services/CreateProduct';
 import Loading from '../../../../components/loading/Loading';
+import { updateProduct } from './services/UpdateProduct';
 
 
 const ModalProduct = () => {
     const queryClient = useQueryClient()
     const dispatch = useDispatch()
+    const infoModal = useSelector(state => state.modal.modalInfo)
 
+    console.log(infoModal);
 
-    const { data } = useQuery({ queryKey: ['categories'], queryFn: getAllCategory })
+    const [isUpdating, setIsUpdating] = useState(false);
 
+    const { data } = useQuery({ queryKey: ['categories'], queryFn: getAllCategory, enabled: !infoModal, })
     const mutation = useMutation(createProduct, {
         onSuccess(data) {
             console.log(data)
@@ -34,11 +38,37 @@ const ModalProduct = () => {
 
     })
 
+    const updateMutation = useMutation(updateProduct, {
+        onSuccess(data) {
+            console.log('Cập nhật thành công:', data);
+            dispatch(closeModal());
+            queryClient.refetchQueries('categories');
+            queryClient.refetchQueries('products');
+        },
+        onError(error) {
+            console.log('Cập nhật thất bại:', error);
+            setIsUpdating(false); // Cập nhật thất bại, đặt lại trạng thái cập nhật
+        },
+
+    })
 
 
 
-    const { register, handleSubmit, control, setValue, formState: { errors } } = useForm()
 
+    const { register, handleSubmit, watch, control, reset, setValue, formState: { errors } } = useForm()
+
+
+    useEffect(() => {
+        if (infoModal) {
+            setValue('name', infoModal.name);
+            setValue('inventory', infoModal.inventory);
+            setValue('price', infoModal.price);
+            setValue('description', infoModal.description);
+            setValue('category', infoModal.category);
+            setValue('weight', infoModal.weight);
+            setValue('deliveryAvailable', infoModal.deliveryAvailable ? 'true' : 'false');
+        }
+    }, [infoModal, setValue]);
 
     const onSubmit = async (data) => {
 
@@ -55,8 +85,23 @@ const ModalProduct = () => {
             formData.append('extraImages', data.extraImages[i]);
         }
 
-        await mutation.mutate(formData);
-        queryClient.refetchQueries('categories');
+        if (infoModal) {
+
+            try {
+                setIsUpdating(true);
+                await updateMutation.mutateAsync(infoModal.id, formData)
+            } catch (error) {
+                console.log('Có lỗi khi cập nhật sản phẩm:', error);
+                setIsUpdating(false);
+            }
+        } else {
+
+            try {
+                await mutation.mutateAsync(formData);
+            } catch (error) {
+                console.log('Có lỗi khi thêm sản phẩm:', error);
+            }
+        }
         console.log(data)
     };
 
@@ -64,12 +109,15 @@ const ModalProduct = () => {
 
     return (
         <div>
-            <ModalBase className='w-[880px]'>
+            <ModalBase className='w-[880px]' handleClose={() => {
+                reset()
+                dispatch(closeModal())
+            }}>
                 {mutation.isLoading && (
                     <Loading />
                 )}
                 <div>
-                    <p className='text-center font-bold text-xl '>Thêm sản phẩm</p>
+                    <p className='text-center font-bold text-xl '>{infoModal ? "Cập nhật sản phẩm" : "Thêm sản phẩm"}</p>
                     <form className='py-10' onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
                         <div className='grid grid-cols-2 gap-4 pl-9'>
                             <div className=' space-y-6'>
@@ -113,7 +161,7 @@ const ModalProduct = () => {
                                 </div>
                                 <div className='space-y-2' >
                                     <p className=''> Tên sản phẩm</p>
-                                    <TextInput className='py-3 px-3 w-[342px]' {...register('name')} />
+                                    <TextInput className='py-3 px-3 w-[342px]'  {...register('name')} />
                                 </div>
 
                                 <div className='space-y-2' >
@@ -135,11 +183,14 @@ const ModalProduct = () => {
                                 <div className='space-y-2' >
                                     <p className=''>Vận chuyển nhanh</p>
                                     <div className='flex space-x-6'>
-                                        <TextInput type='radio' value='true' className='py-3 px-3 ' {...register('deliveryAvailable')} />
+                                        <TextInput type='radio' value='true' className='py-3 px-3 '   {...register('deliveryAvailable')}
+                                            checked={watch('deliveryAvailable') === 'true'} />
                                         <label>Có</label>
                                     </div>
                                     <div className='flex space-x-6'>
-                                        <TextInput type='radio' value='false' className='py-3 px-3 ' {...register('deliveryAvailable')} />
+                                        <TextInput type='radio' value='false' className='py-3 px-3 '       {...register('deliveryAvailable')}
+                                            checked={watch('deliveryAvailable') === 'false'}
+                                        />
                                         <label>Không</label>
                                     </div>
                                 </div>
@@ -154,9 +205,13 @@ const ModalProduct = () => {
                             </div>
                         </div>
                         <div className=' pt-10 text-right mr-20 space-x-6'>
-                            <BaseButton title='Hủy' type='button' className='px-5 py-2 bg-red-600 text-white rounded-lg' handleClick={() => dispatch(closeModal())} />
+                            <BaseButton title='Hủy' type='button' className='px-5 py-2 bg-red-600 text-white rounded-lg'
+                                handleClick={() => {
+                                    dispatch(closeModal())
+                                }}
+                            />
                             <BaseButton
-                                title='Thêm sản phẩm'
+                                title={infoModal ? 'Cập nhật sản phẩm' : 'Thêm sản phẩm'}
                                 className='px-5 py-2 bg-slate-700 text-white rounded-lg'
                                 type='submit'
                                 disabled={mutation.isLoading} />
