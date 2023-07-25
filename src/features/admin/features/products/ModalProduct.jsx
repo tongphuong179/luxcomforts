@@ -48,6 +48,8 @@ const ModalProduct = () => {
         formData.append('price', data.price);
         formData.append('description', data.description);
         formData.append('category', data.category.id);
+        formData.append('weight', data.weight);
+        formData.append('deliveryAvailable', data.deliveryAvailable === 'true');
         formData.append('imageFile', data.imageFile[0]); // Assuming you want to upload only one image
         for (let i = 0; i < data.extraImages.length; i++) {
             formData.append('extraImages', data.extraImages[i]);
@@ -55,6 +57,7 @@ const ModalProduct = () => {
 
         await mutation.mutate(formData);
         queryClient.refetchQueries('categories');
+        console.log(data)
     };
 
 
@@ -79,7 +82,7 @@ const ModalProduct = () => {
                                         render={({ field }) => (
                                             <Listbox value={field.value} onChange={field.onChange}>
                                                 <Listbox.Button className='rounded-md flex relative border border-gray-300 bg-gray-200 w-[342px] focus:bg-gray-200 py-[12px]'>
-                                                    <span className='px-3'>{field.value.name}</span>
+                                                    <span className='px-3'>{field.value?.name}</span>
                                                     <span className='absolute top-4 right-[6px]'>
                                                         <AiFillCaretDown />
                                                     </span>
@@ -117,6 +120,10 @@ const ModalProduct = () => {
                                     <p className=''>Số lượng</p>
                                     <TextInput className='py-3 px-3 w-[342px] '{...register('inventory')} />
                                 </div>
+                                <div className='space-y-2' >
+                                    <p className=''>Khối lượng(g)</p>
+                                    <TextInput className='py-3 px-3 w-[342px] '{...register('weight')} />
+                                </div>
 
                             </div>
                             <div className='space-y-6'>
@@ -124,6 +131,17 @@ const ModalProduct = () => {
                                 <div className='space-y-2' >
                                     <p className=''>Giá gốc(vnđ)</p>
                                     <TextInput className='py-3 px-3 w-[342px]' {...register('price')} />
+                                </div>
+                                <div className='space-y-2' >
+                                    <p className=''>Vận chuyển nhanh</p>
+                                    <div className='flex space-x-6'>
+                                        <TextInput type='radio' value='true' className='py-3 px-3 ' {...register('deliveryAvailable')} />
+                                        <label>Có</label>
+                                    </div>
+                                    <div className='flex space-x-6'>
+                                        <TextInput type='radio' value='false' className='py-3 px-3 ' {...register('deliveryAvailable')} />
+                                        <label>Không</label>
+                                    </div>
                                 </div>
                                 <div className='space-y-2' >
                                     <p className=''> ExtraImages </p>

@@ -18,25 +18,30 @@ const ProductAdminScreen = () => {
     const dispatch = useDispatch()
 
 
-    const [type, setType] = useState(true)
+
     const { data } = useQuery({ queryKey: ['products'], queryFn: getAllProduct })
-    const info = useSelector(state => state.modal.modalInfo)
-    console.log(info)
+    const [modalAdd, setModalAdd] = useState('')
+    const [modalDelete, setModalDelete] = useState('')
 
     const handleUpdateProduct = () => {
 
-        dispatch(openModal(type))
+
     }
 
     const handleDeleteProduct = (productId) => {
+        setModalAdd("DELETE")
         console.log(productId);
-        setType(false)
         dispatch(openModal(productId))
     }
     return (
         <div className=' px-10 py-[50px] '>
             <div className='text-right'>
-                <BaseButton handleClick={() => dispatch(openModal())} title="Thêm sản phẩm" className='px-6 py-3 mr-1 rounded-xl text-lg text-white bg-slate-700' />
+                <BaseButton handleClick={() => {
+                    setModalAdd('ADD')
+                    dispatch(openModal())
+                }}
+                    title="Thêm sản phẩm"
+                    className='px-6 py-3 mr-1 rounded-xl text-lg text-white bg-slate-700' />
             </div>
 
             <div className="max-h-[calc(90vh-150px)] overflow-y-auto mt-10">
@@ -64,14 +69,14 @@ const ProductAdminScreen = () => {
                                     <td className="border-b border-slate-700 py-3 px-4 text-center">{product.product.inventory}</td>
                                     <td className="border-b border-slate-700 py-3 px-4 text-center ">{product.product.price}</td>
                                     <td className="border-b border-slate-700 py-3 px-4 text-center ">
-                                        <img className='w-[120px]' src={product.product.mainImage} alt="" />
+                                        <img className='w-[120px] h-[120px]' src={product.product.mainImage} alt="" />
                                     </td>
                                     <td className="border-b border-slate-700 py-3 px-4 text-center ">{product.product.weight}</td>
                                     <td className="border-b border-slate-700 py-3 px-4 text-center ">{product.product.deliveryAvailable ? "có" : "không"}</td>
                                     <td className="border-b border-slate-700 py-3 px-4 text-center ">{product.product.total_sold}</td>
                                     <td className="border-b border-slate-700 py-3 px-4 text-center ">{product.price_discount}</td>
                                     <td className="border-b border-slate-700 py-3 px-4 text-center relative">
-                                        <div className='absolute top-[50px] left-[20px]'>
+                                        <div className='absolute top-[38%] left-[20px]'>
                                             <MenuDropDown label={
                                                 <IoSettingsSharp size={30} className="ml-4 text-slate-700 hover:text-slate-500 cursor-pointer" />
                                             } className='space-y-1'>
@@ -90,8 +95,9 @@ const ProductAdminScreen = () => {
                 </table>
             </div>
 
-            {type && <ModalProduct />}
-            {!type && < ModalDeleteProduct />}
+            {modalAdd === "ADD" ? <ModalProduct /> : <ModalDeleteProduct />}
+
+
 
         </div >
     )
