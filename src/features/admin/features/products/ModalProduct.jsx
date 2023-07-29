@@ -22,15 +22,20 @@ const ModalProduct = () => {
     const dispatch = useDispatch()
     const infoModal = useSelector(state => state.modal.modalInfo)
 
-    console.log(infoModal);
+
 
     const [isUpdating, setIsUpdating] = useState(false);
 
     const { data } = useQuery({ queryKey: ['categories'], queryFn: getAllCategory, enabled: !infoModal, })
+
+
+
     const mutation = useMutation(createProduct, {
         onSuccess(data) {
             console.log(data)
+            queryClient.invalidateQueries('products')
             dispatch(closeModal())
+            reset()
         },
         onError(error) {
             console.log('thêm thất bại')
@@ -38,27 +43,16 @@ const ModalProduct = () => {
 
     })
 
-    const updateMutation = useMutation(updateProduct, {
-        onSuccess(data) {
-            console.log('Cập nhật thành công:', data);
-            dispatch(closeModal());
-            queryClient.refetchQueries('categories');
-            queryClient.refetchQueries('products');
-        },
-        onError(error) {
-            console.log('Cập nhật thất bại:', error);
-            setIsUpdating(false); // Cập nhật thất bại, đặt lại trạng thái cập nhật
-        },
-
-    })
 
 
 
 
-    const { register, handleSubmit, watch, control, reset, setValue, formState: { errors } } = useForm()
+
+    const { register, handleSubmit, watch, control, reset, setValue } = useForm()
 
 
     useEffect(() => {
+        console.log(infoModal)
         if (infoModal) {
             setValue('name', infoModal.name);
             setValue('inventory', infoModal.inventory);
@@ -70,7 +64,20 @@ const ModalProduct = () => {
         }
     }, [infoModal, setValue]);
 
+    const updateMutation = useMutation((updateData) => updateProduct(infoModal.id, updateData), {
+        onSuccess(data) {
+            queryClient.invalidateQueries('products')
+            dispatch(closeModal())
+
+        },
+        onError(error) {
+            console.log(error)
+        },
+
+    })
+
     const onSubmit = async (data) => {
+
 
         const formData = new FormData();
         formData.append('name', data.name);
@@ -85,24 +92,30 @@ const ModalProduct = () => {
             formData.append('extraImages', data.extraImages[i]);
         }
 
+
+
         if (infoModal) {
+            console.log(data)
 
             try {
-                setIsUpdating(true);
-                await updateMutation.mutateAsync(infoModal.id, formData)
+                console.log(data)
+                await updateMutation.mutateAsync(formData);
             } catch (error) {
                 console.log('Có lỗi khi cập nhật sản phẩm:', error);
-                setIsUpdating(false);
+
             }
         } else {
 
+            console.log(data)
+
             try {
+                console.log(formData)
                 await mutation.mutateAsync(formData);
             } catch (error) {
                 console.log('Có lỗi khi thêm sản phẩm:', error);
             }
         }
-        console.log(data)
+
     };
 
 
@@ -116,6 +129,9 @@ const ModalProduct = () => {
                 {mutation.isLoading && (
                     <Loading />
                 )}
+                {updateMutation.isLoading && (
+                    <Loading />
+                )}
                 <div>
                     <p className='text-center font-bold text-xl '>{infoModal ? "Cập nhật sản phẩm" : "Thêm sản phẩm"}</p>
                     <form className='py-10' onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
@@ -123,14 +139,14 @@ const ModalProduct = () => {
                             <div className=' space-y-6'>
                                 <div className='space-y-2 relative' >
                                     <p className=''>Danh mục</p>
-                                    <Controller
+                                    {data && <Controller
                                         name='category'
                                         control={control}
                                         defaultValue={data && data.length > 0 ? data[0] : null}
                                         render={({ field }) => (
                                             <Listbox value={field.value} onChange={field.onChange}>
                                                 <Listbox.Button className='rounded-md flex relative border border-gray-300 bg-gray-200 w-[342px] focus:bg-gray-200 py-[12px]'>
-                                                    <span className='px-3'>{field.value?.name}</span>
+                                                    <span className='px-3'>{field.value.name}</span>
                                                     <span className='absolute top-4 right-[6px]'>
                                                         <AiFillCaretDown />
                                                     </span>
@@ -153,7 +169,7 @@ const ModalProduct = () => {
                                                 </Listbox.Options>
                                             </Listbox>
                                         )}
-                                    />
+                                    />}
                                 </div>
                                 <div className='space-y-2' >
                                     <p className=''> Ảnh sản phẩm</p>
@@ -207,6 +223,7 @@ const ModalProduct = () => {
                         <div className=' pt-10 text-right mr-20 space-x-6'>
                             <BaseButton title='Hủy' type='button' className='px-5 py-2 bg-red-600 text-white rounded-lg'
                                 handleClick={() => {
+                                    reset()
                                     dispatch(closeModal())
                                 }}
                             />

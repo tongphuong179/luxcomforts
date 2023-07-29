@@ -17,6 +17,7 @@
     "axios": "^1.4.0",
     "clsx": "^1.2.1",
     "react": "^18.2.0",
+    "react-datepicker": "^4.16.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.45.1",
     "react-hot-toast": "^2.4.1",
@@ -24,6 +25,7 @@
     "react-image-magnify": "^2.7.4",
     "react-redux": "^8.1.1",
     "react-router-dom": "^6.14.0",
+    "react-select": "^5.7.4",
     "redux-persist": "^6.0.0",
     "swiper": "^10.0.4",
     "tailwind-merge": "^1.13.2"

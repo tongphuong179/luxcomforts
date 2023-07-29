@@ -4,7 +4,7 @@ import {
 } from "../../../../../services/axios.config";
 import { store } from "../../../../../store/store";
 
-export const deleteCategory = async (categoryId) => {
+export const deleteCategory = async (categoryId, category) => {
   const isLoggedIn = store.getState().auth.isLogin;
 
   if (!isLoggedIn) {
@@ -14,7 +14,10 @@ export const deleteCategory = async (categoryId) => {
   setAccessToken(token);
 
   try {
-    const res = await axiosInstance.delete(`/category/delete/${categoryId}`);
+    const res = await axiosInstance.put(
+      `/category/save/${categoryId}`,
+      category
+    );
     return res.data;
   } catch (error) {
     throw new Error(error.response.data);

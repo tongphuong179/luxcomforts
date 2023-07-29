@@ -6,13 +6,24 @@ import { useDispatch, useSelector } from 'react-redux'
 import { addCart, removeCart } from './state/CartSlice'
 import { TiDeleteOutline } from 'react-icons/ti'
 import { useNavigate } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
+import { useQuery } from '@tanstack/react-query'
+import { applyVoucher } from './services/ApplyVoucher'
+import { axiosInstance } from '../../services/axios.config'
 
 
 const CartScreen = () => {
   const navigate = useNavigate()
+  const currentUser = useSelector(state => state.auth.currentUser)
+
 
   const dispatch = useDispatch()
   const carts = useSelector(state => state.cart.carts)
+  const { register, handleSubmit } = useForm()
+
+
+
+
 
   if (carts.length === 0) {
     return (
@@ -60,6 +71,14 @@ const CartScreen = () => {
   const totals = carts.reduce((total, cart) => {
     return total + (cart.quantity * cart.price)
   }, 0)
+
+  const onSubmit = async (data) => {
+    try {
+      const res = await axiosInstance.get(`/voucher/apply?voucherCode=${data.voucher}&username=${currentUser.username}`)
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   return (
     <div className='px-[280px] pb-[100px]'>
@@ -159,8 +178,11 @@ const CartScreen = () => {
               <p className='text-gray-600'>Coupon</p>
             </div>
 
-            <TextInput placeholder=" Coupon code" className='w-full mt-5' />
-            <BaseButton title='Apply coupon' className='w-full py-3 mt-7 text-white' />
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <TextInput placeholder=" Coupon code" className='w-full mt-5' {...register('voucher')} />
+              <BaseButton title='Apply coupon' className='w-full py-3 mt-7 text-white' />
+            </form>
+
           </div>
         </div>
 

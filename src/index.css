@@ -2,4 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+.react-datepicker-wrapper{
+    @apply focus:outline-none 
 
+}
+.react-datepicker__input-container {
+    @apply border-[1px] border-gray-400 rounded-md outline-none focus:outline-none 
+}
+.react-datepicker__input-container input{
+    @apply bg-gray-200 px-2 py-[10px] rounded-md  w-[240px]  outline-none focus:bg-white
+}

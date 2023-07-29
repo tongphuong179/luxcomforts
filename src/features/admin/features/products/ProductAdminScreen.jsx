@@ -21,7 +21,7 @@ const ProductAdminScreen = () => {
 
     const { data } = useQuery({ queryKey: ['products'], queryFn: getAllProduct })
     const [modalAdd, setModalAdd] = useState('')
-    const [modalDelete, setModalDelete] = useState('')
+
 
     const handleUpdateProduct = (product) => {
         setModalAdd('UPDATE')
@@ -58,7 +58,7 @@ const ProductAdminScreen = () => {
                             <th className="sticky top-0 bg-slate-700 text-white py-6 px-4 text-lg font-semibold">Giao hàng nhanh</th>
                             <th className="sticky top-0 bg-slate-700 text-white py-6 px-4 text-lg font-semibold">Đã bán</th>
                             <th className="sticky top-0 bg-slate-700 text-white py-6 px-4 text-lg font-semibold">Giá bán(vnđ)</th>
-                            <th className="sticky top-0 bg-slate-700 text-white py-6 px-4 text-lg font-semibold">Hành động</th>
+                            <th className="sticky top-0 bg-slate-700 text-white py-6 px-4 text-lg font-semibold w-[180px]">Hành động</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -76,17 +76,15 @@ const ProductAdminScreen = () => {
                                     <td className="border-b border-slate-700 py-3 px-4 text-center ">{product.product.deliveryAvailable ? "có" : "không"}</td>
                                     <td className="border-b border-slate-700 py-3 px-4 text-center ">{product.product.total_sold}</td>
                                     <td className="border-b border-slate-700 py-3 px-4 text-center ">{product.price_discount}</td>
-                                    <td className="border-b border-slate-700 py-3 px-4 text-center relative">
-                                        <div className='absolute top-[38%] left-[20px]'>
-                                            <MenuDropDown label={
-                                                <IoSettingsSharp size={30} className="ml-4 text-slate-700 hover:text-slate-500 cursor-pointer" />
-                                            } className='space-y-1'>
+                                    <td className="border-b border-slate-700 py-3 px-4 text-center">
+                                        <div className=' space-x-2'>
 
-                                                <BaseButton handleClick={() => handleUpdateProduct(product.product)} title='Sửa' className='px-2 z-50 py-1 rounded-lg bg-slate-600 text-white ' />
 
-                                                <BaseButton handleClick={() => handleDeleteProduct(product.product.id)} title='Xóa' className='px-2 z-50 py-1 rounded-lg bg-slate-600 text-white' />
+                                            <BaseButton handleClick={() => handleUpdateProduct(product.product)} title='Sửa' className='px-2 z-50 py-1 rounded-lg bg-slate-600 text-white ' />
 
-                                            </MenuDropDown>
+                                            <BaseButton handleClick={() => handleDeleteProduct(product.product.id)} title='Xóa' className='px-2 z-50 py-1 rounded-lg bg-slate-600 text-white' />
+
+
                                         </div>
                                     </td>
                                 </tr>

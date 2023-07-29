@@ -31,7 +31,6 @@ const ModalDeleteProduct = () => {
     return (
         <ModalBase>
             <div>
-
                 <p>Bạn có chắc chắn muốn xóa  sản phẩm này không</p>
                 <div className=' pt-10 text-right  space-x-6'>
                     <BaseButton title='Hủy' type='button' className='px-5 py-2 bg-red-600 text-white rounded-lg' handleClick={() => dispatch(closeModal())} />

@@ -20,9 +20,9 @@ import LayoutAdmin from "./components/admin/LayoutAdmin"
 import UserAdminScreen from "./features/admin/features/user/UserAdminScreen"
 import ProductAdminScreen from "./features/admin/features/products/ProductAdminScreen"
 import CategoryAdminScreen from "./features/admin/features/categories/CategoryAdminScreen"
-import DiscountAdminScreen from "./features/admin/features/DiscountAdminScreen"
-import VoucherAdminScreen from "./features/admin/features/VoucherAdminScreen"
-import OrderAdminScreen from "./features/admin/features/OrderAdminScreen"
+import DiscountAdminScreen from "./features/admin/features/discount/DiscountAdminScreen"
+import VoucherAdminScreen from "./features/admin/features/voucher/VoucherAdminScreen"
+import OrderAdminScreen from "./features/admin/features/order/OrderAdminScreen"
 
 function App() {
 

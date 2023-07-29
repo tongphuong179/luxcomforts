@@ -8,18 +8,37 @@ import { Menu } from '@headlessui/react';
 import ModalCategory from './ModalCategory';
 import { useDispatch } from 'react-redux';
 import { openModal } from '../../../../components/modal/state/ModalSlice';
+import { useState } from 'react';
+import ModalDeleteCategory from './ModalDeleteCategory';
 
 const CategoryAdminScreen = () => {
 
     const dispatch = useDispatch()
 
     const { data } = useQuery({ queryKey: ['category'], queryFn: getAllCategory })
+    const [modal, setModal] = useState('')
     console.log(data);
+
+    const handleUpdateCategory = (category) => {
+        setModal('UPDATE')
+        dispatch(openModal(category))
+    }
+    const handleDeleteCategory = (categoryId) => {
+        setModal('DELETE')
+        dispatch(openModal(categoryId))
+    }
 
     return (
         <div className='pt-[80px] px-[80px]'>
             <div className='text-right pb-10' >
-                <BaseButton handleClick={() => dispatch(openModal())} title="Thêm danh mục sản phẩm" className='px-6 py-3 mr-1 rounded-xl text-lg text-white bg-slate-700' />
+                <BaseButton
+                    handleClick={() => {
+                        setModal('ADD')
+                        dispatch(openModal())
+                    }
+                    }
+                    title="Thêm danh mục sản phẩm"
+                    className='px-6 py-3 mr-1 rounded-xl text-lg text-white bg-slate-700' />
             </div>
             <table className="border-collapse border border-slate-500 w-full">
                 <thead>
@@ -37,16 +56,13 @@ const CategoryAdminScreen = () => {
                                 <td className="border border-slate-700 py-8 px-4 text-center">{index + 1}</td>
                                 <td className="border border-slate-700 py-8 px-4 text-center">{category.name}</td>
                                 <td className="border border-slate-700 py-8 px-4 text-center">
-                                    <MenuDropDown label={
-                                        <IoSettingsSharp size={30} className="ml-4 text-slate-700 hover:text-slate-500 cursor-pointer" />
-                                    } className='space-y-2'>
-                                        <Menu.Item>
-                                            <BaseButton handleClick={() => handleUpdateProduct()} title='Sửa' className='px-2 py-1 bg-slate-600 text-white' />
-                                        </Menu.Item>
-                                        <Menu.Item>
-                                            <BaseButton handleClick={() => handleDeleteProduct()} title='Xóa' className='px-2 py-1 bg-slate-600 text-white' />
-                                        </Menu.Item>
-                                    </MenuDropDown>
+
+                                    <div className='space-x-4'>
+                                        <BaseButton handleClick={() => handleUpdateCategory(category)} title='Sửa' type='button' className='px-3 py-1 rounded-lg bg-slate-600 text-white' />
+
+                                        <BaseButton handleClick={() => handleDeleteCategory(category.id)} title='Xóa' className='px-3 py-1 rounded-lg bg-slate-600 text-white' />
+                                    </div>
+
                                 </td>
                             </tr>
                         )
@@ -54,7 +70,8 @@ const CategoryAdminScreen = () => {
 
                 </tbody>
             </table>
-            <ModalCategory />
+            {modal === "DELETE" ? <ModalDeleteCategory /> : <ModalCategory />}
+
         </div>
     )
 }
