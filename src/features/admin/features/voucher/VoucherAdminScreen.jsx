@@ -14,6 +14,7 @@ const VoucherAdminScreen = () => {
     const handleAdd = () => {
         dispatch(openModal())
     }
+    
     return (
         <div className=' px-10 py-[50px] '>
             <div className='text-right '>

@@ -10,14 +10,25 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getAllProduct } from '../../../shop/services/GetAllProduct';
 import { createDiscount } from './services/CreateDiscount';
 import { formatDateToISO } from './services/formarDate';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { closeModal } from '../../../../components/modal/state/ModalSlice';
+import { updateDiscount } from './services/UpdateDiscount';
+import { format, parseISO } from 'date-fns';
+import { getAllProductByDiscount } from './services/getAllProductByDiscount';
+import { updateProduct } from '../products/services/UpdateProduct';
+import { axiosInstance } from '../../../../services/axios.config';
 
 
 const ModalDiscount = () => {
     const dispatch = useDispatch()
     const queryClient = useQueryClient()
-    const { control, handleSubmit, reset, register } = useForm()
+    const infoModal = useSelector(state => state.modal.modalInfo)
+
+
+
+
+
+    const { control, handleSubmit, reset, register, setValue } = useForm()
 
 
     const { data: options = [] } = useQuery(['products'], getAllProduct, {
@@ -27,6 +38,8 @@ const ModalDiscount = () => {
                 label: product.product.name,
             })),
     });
+
+
 
 
 
@@ -41,8 +54,32 @@ const ModalDiscount = () => {
             console.log(error)
         }
     })
+    useEffect(() => {
+
+        if (infoModal) {
+
+            setValue('limit', infoModal.limit);
+            setValue('start', parseISO(infoModal.start))
+            setValue('end', parseISO(infoModal.end))
+            setValue('discountPercentage', infoModal.discountPercentage)
+            setValue('discountAmountMax', infoModal.discountAmountMax)
+
+        }
+    }, [infoModal, setValue]);
+
+    const updateMutation = useMutation((updateData) => updateDiscount(infoModal.id, updateData), {
+        onSuccess(data) {
+            queryClient.invalidateQueries('products')
+            dispatch(closeModal())
+
+        },
+        onError(error) {
+            console.log(error)
+        },
+    })
     const onSubmit = (data) => {
-        console.log(data.start)
+
+
 
         const discountData = {
             limit: data.limit,
@@ -58,8 +95,14 @@ const ModalDiscount = () => {
             discount: discountData,
             products: product
         }
-        mutation.mutate(mutateData)
-        console.log(mutateData);
+        if (infoModal) {
+            updateMutation.mutate(mutateData)
+        }
+        else {
+            mutation.mutate(mutateData)
+
+        }
+
     };
 
 

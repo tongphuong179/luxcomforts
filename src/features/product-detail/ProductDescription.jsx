@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { addCart } from '../cart/state/CartSlice'
 
-const ProductDescription = ({ description, price_discount  }) => {
+const ProductDescription = ({ description, price_discount }) => {
 
     const [count, setcount] = useState(1)
     const carts = useSelector(state => state.cart.carts)
@@ -18,11 +18,12 @@ const ProductDescription = ({ description, price_discount  }) => {
         if (index !== -1) {
             productCarts[index] = {
                 ...productCarts[index],
-                quantity: productCarts[index].quantity + count
+                quantity: productCarts[index].quantity + count,
+                price_discount: price_discount
             }
         }
         else {
-            const product = { ...description, quantity: count }
+            const product = { ...description, quantity: count, price_discount: price_discount }
             productCarts.push(product)
         }
 
@@ -34,7 +35,7 @@ const ProductDescription = ({ description, price_discount  }) => {
                 <p className='text-gray-500'>{description.name}</p>
                 <p className='text-2xl pt-4 text-gray-600'>{description.description}</p>
                 <div className='flex items-center space-x-2 pt-5 text-2xl'>
-                {price_discount ? ( // Render the discounted price if discountPrice is available
+                    {price_discount ? ( // Render the discounted price if discountPrice is available
                         <>
                             <p className='font-light text-gray-500 line-through'>{description.price}</p>
                             <p>{price_discount} vnđ</p> {/* Use the discountPrice prop */}

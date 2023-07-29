@@ -19,6 +19,7 @@ const CartScreen = () => {
 
   const dispatch = useDispatch()
   const carts = useSelector(state => state.cart.carts)
+  console.log(carts);
   const { register, handleSubmit } = useForm()
 
 
@@ -69,7 +70,7 @@ const CartScreen = () => {
   }
 
   const totals = carts.reduce((total, cart) => {
-    return total + (cart.quantity * cart.price)
+    return total + (cart.quantity * cart.price_discount)
   }, 0)
 
   const onSubmit = async (data) => {
@@ -122,7 +123,7 @@ const CartScreen = () => {
                       </div>
                     </td>
                     <td>
-                      <p>${product.price}</p>
+                      <p>${product.price_discount}</p>
                     </td>
                     <td>
                       <div className='flex'>
@@ -131,7 +132,7 @@ const CartScreen = () => {
                         <button className='py-2 px-2 border-[1px]' onClick={() => handleAdd(product.id)}>+</button>
                       </div>
                     </td>
-                    <td align='right'>${product.quantity * product.price} </td>
+                    <td align='right'>${product.quantity * product.price_discount} </td>
                   </tr>
                 )
               })}

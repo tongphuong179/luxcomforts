@@ -14,6 +14,9 @@ const DiscountAdminScreen = () => {
     const handleAdd = () => {
         dispatch(openModal())
     }
+    const handleUpdateDiscount = (discount) => {
+        dispatch(openModal(discount))
+    }
     return (
         <div className=' px-10 py-[50px] '>
             <div className='text-right '>
@@ -49,9 +52,9 @@ const DiscountAdminScreen = () => {
                                         <div className=' space-x-2'>
 
 
-                                            <BaseButton handleClick={() => handleUpdateProduct(product.product)} title='Sửa' className='px-2 z-50 py-1 rounded-lg bg-slate-600 text-white ' />
+                                            <BaseButton handleClick={() => handleUpdateDiscount(discount)} title='Sửa' className='px-2 z-50 py-1 rounded-lg bg-slate-600 text-white ' />
 
-                                            <BaseButton handleClick={() => handleDeleteProduct(product.product.id)} title='Xóa' className='px-2 z-50 py-1 rounded-lg bg-slate-600 text-white' />
+                                            <BaseButton title='Xóa' className='px-2 z-50 py-1 rounded-lg bg-slate-600 text-white' />
 
 
                                         </div>
