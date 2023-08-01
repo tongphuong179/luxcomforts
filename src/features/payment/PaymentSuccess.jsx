@@ -6,7 +6,7 @@ import { axiosInstance } from '../../services/axios.config';
 const PaymentSuccess = () => {
     useEffect(() => {
         const currentUrl = window.location.href;
-        const urlSearchParams = new URLSearchParams(currentUrl);
+        const urlSearchParams = new URLSearchParams(currentUrl.split('?')[1]);
         const params = {};
         for (const [key, value] of urlSearchParams.entries()) {
             params[key] = value;
