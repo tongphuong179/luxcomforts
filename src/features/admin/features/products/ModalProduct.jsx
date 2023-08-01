@@ -87,9 +87,20 @@ const ModalProduct = () => {
         formData.append('category', data.category.id);
         formData.append('weight', data.weight);
         formData.append('deliveryAvailable', data.deliveryAvailable === 'true');
-        formData.append('imageFile', data.imageFile[0]); // Assuming you want to upload only one image
-        for (let i = 0; i < data.extraImages.length; i++) {
-            formData.append('extraImages', data.extraImages[i]);
+        if(data.imageFile.length>0){
+            formData.append('imageFile', data.imageFile[0]); // Assuming you want to upload only one image
+        }else{
+            const file = new File([],"");
+            formData.append('imageFile', file);
+        }
+        
+        if(data.extraImages.length>0){
+            for (let i = 0; i < data.extraImages.length; i++) {
+                formData.append('extraImages', data.extraImages[i]);
+            }
+        }else{
+            const file = new File([],"");
+            formData.append('extraImages',file);
         }
 
 
