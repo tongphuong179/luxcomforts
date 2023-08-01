@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import BaseButton from '../../components/button/BaseButton'
 import TextInput from '../../components/input/TextInput'
 import { AiFillTag } from 'react-icons/ai'
@@ -7,20 +7,160 @@ import { addCart, removeCart } from './state/CartSlice'
 import { TiDeleteOutline } from 'react-icons/ti'
 import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { applyVoucher } from './services/ApplyVoucher'
 import { axiosInstance } from '../../services/axios.config'
+import RadioController from '../../components/input/radio/ControllerRadio'
+import MyRadioGroup from '../../components/input/radio/ControllerRadio'
+import ControllerRadio from '../../components/input/radio/ControllerRadio'
+import { checkout } from './services/Checkout'
+import { order } from './services/Order'
+
+
 
 
 const CartScreen = () => {
   const navigate = useNavigate()
   const currentUser = useSelector(state => state.auth.currentUser)
+  console.log(currentUser);
 
 
   const dispatch = useDispatch()
   const carts = useSelector(state => state.cart.carts)
   console.log(carts);
-  const { register, handleSubmit } = useForm()
+  const { register, handleSubmit, control, watch } = useForm()
+  const [dataCheckout, setDataCheckout] = useState('')
+  const [selectedShipping, setSelectedShipping] = useState('SHOP');
+
+  const pays = [
+    {
+      value: 'COD',
+      label: 'Thanh toán khi nhận hàng',
+    },
+    {
+      value: 'ONLINE',
+      label: 'Thanh toán qua VnPay',
+    },
+  ];
+
+  const shippings = [
+    {
+      value: 'GHN',
+      label: 'Giao hàng nhanh',
+    },
+    {
+      value: 'SHOP',
+      label: 'Shop tự vận chuyển',
+    },
+  ]
+  const cartCheckout = carts.map(cart => ({
+    productId: cart.id,
+    quantity: cart.quantity
+  }))
+  console.log(cartCheckout)
+
+
+
+
+
+  const checkoutData =
+  // {
+  //   paymentType: "COD",
+  //   deliveryType: selectedShipping,
+  //   voucherCode: "",
+  //   deliveryAddress: {
+  //     id: 7
+  //   },
+  //   user: {
+  //     username: currentUser.username
+  //   },
+  //   orderItemDTOS: cartCheckout
+  // }
+  {
+    "paymentType": "COD",
+    "deliveryType": "GHN",
+    "voucherCode": "",
+    "deliveryAddress": {
+      "id": 7
+    },
+    "user": {
+      "id": 3
+    },
+    "orderItemDTOS": [
+      {
+        "productId": 1,
+        "quantity": 1
+      }
+    ]
+  }
+
+
+  useEffect(() => {
+    const postCheckout = async () => {
+      try {
+        const res = await axiosInstance.post('/order/checkout', checkoutData)
+        setDataCheckout(res.data)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    postCheckout()
+  }, []);
+
+
+
+  const onSubmit = async (data) => {
+    const dataUpdate = {
+      ...checkoutData,
+      deliveryType: data.selectedShipping,
+
+    }
+
+    const res = await axiosInstance.post('/order/checkout', dataUpdate)
+    setDataCheckout(res.data)
+
+  }
+  const handleApply = async (data) => {
+    const dataApply = {
+      ...checkoutData,
+      voucherCode: data.voucher
+    }
+    try {
+      const res = await axiosInstance.post('/order/checkout', dataApply)
+      alert("Áp dụng voucher thành công")
+      setDataCheckout(res.data)
+    } catch (error) {
+      alert("Voucher không hợp lệ hoặc đã hết hạn sử dụng")
+    }
+  }
+
+  const orderMutation = useMutation(order, {
+    onSuccess(data) {
+      if (data.message) {
+        window.open(data.message, '_blank')
+      } else {
+        alert("Bạn đã đặt hàng thành công ")
+      }
+    }
+  })
+  const handleOrder = (data) => {
+    const orderData = {
+      ...checkoutData,
+      deliveryType: data.selectedShipping,
+      voucherCode: data.voucher,
+      paymentType: data.selectedPay,
+
+    }
+    console.log(orderData);
+    orderMutation.mutate(orderData)
+
+  }
+
+
+
+
+
+
 
 
 
@@ -68,18 +208,14 @@ const CartScreen = () => {
     const newProductCarts = productCarts.filter(item => item.id !== id)
     dispatch(addCart(newProductCarts))
   }
-
   const totals = carts.reduce((total, cart) => {
     return total + (cart.quantity * cart.price_discount)
   }, 0)
 
-  const onSubmit = async (data) => {
-    try {
-      const res = await axiosInstance.get(`/voucher/apply?voucherCode=${data.voucher}&username=${currentUser.username}`)
-    } catch (error) {
-      console.error(error);
-    }
-  }
+
+
+
+
 
   return (
     <div className='px-[280px] pb-[100px]'>
@@ -144,10 +280,47 @@ const CartScreen = () => {
             <BaseButton handleClick={() => navigate('/shop')} title="CONTINUE SHOPPING" className='py-2 px-5 bg-white text-primary border-2 border-primary hover:bg-primary hover:text-white' />
             <BaseButton title="REMOVE CART" className='py-2 px-4 text-white' handleClick={() => dispatch(removeCart())} />
           </div>
+
+          <div>
+            <p className='text-xl font-medium pt-14'>Hình thức giao hàng</p>
+            <div className='pt-7'>
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <ControllerRadio
+                  name="selectedShipping"
+                  control={control}
+                  options={shippings}
+                />
+                <BaseButton title="cập nhật" className='px-4 py-1 text-white rounded-lg mt-4' />
+              </form>
+
+            </div>
+          </div>
+          <div>
+            <p className='text-xl font-medium pt-14'>Địa chỉ giao hàng</p>
+            <div className='pt-7'>
+              <p>Phường Dịch Vọng , Cầu Giấy , Hà Nội</p>
+            </div>
+          </div>
         </div>
 
         <div className='mt-[50px] pl-4 border-l-2'>
           <p className='text-xl w-full border-b-4 pb-[2px]'>Cart ToTals</p>
+
+
+          <div className='py-8'>
+            <div className='flex items-center space-x-2 w-full border-b-4 pb-2'>
+              <AiFillTag />
+              <p className='text-gray-600'>Voucher</p>
+            </div>
+
+
+            <form onSubmit={handleSubmit(handleApply)}>
+              <TextInput placeholder=" Coupon code" className='w-full mt-5' {...register('voucher')} />
+              <BaseButton title='Apply coupon' className='w-full py-3 mt-7 text-white' />
+            </form>
+          </div>
+
+
           <div className='pt-8 space-y-4'>
             <div className='flex justify-between  border-b-2'>
               <p>Subtotal</p>
@@ -155,36 +328,30 @@ const CartScreen = () => {
             </div>
             <div className='flex justify-between  border-b-2'>
               <p>Tax</p>
-              <p>$0.00</p>
+              <p>${dataCheckout?.deliveryFee}</p>
             </div>
             <div className='flex justify-between  border-b-2'>
               <p>Total</p>
-              <p>${totals}</p>
+              <p>${dataCheckout?.total}</p>
             </div>
           </div>
 
-          <div className='pt-7 text-center flex justify-center'>
-            <img width={350} src="https://static.afterpay.com/button/checkout-with-afterpay/black-on-mint.svg" alt="" />
-          </div>
+          <p className=' text-xl font-medium pt-14'>Hình thức thanh toán</p>
 
-          <div className='py-8'>
-            <BaseButton title="PROCEED TO CHECKOUT" className="w-full py-3 bg-red-600 text-white font-medium text-xl" />
-            <p className='text-center py-5 text-gray-400'>or</p>
-            <BaseButton title="VN PAY" className="w-full py-3 bg-blue-600 text-white font-medium text-xl" />
-          </div>
 
-          <div>
-            <div className='flex items-center space-x-2 w-full border-b-4 pb-2'>
-              <AiFillTag />
-              <p className='text-gray-600'>Coupon</p>
+          <form onSubmit={handleSubmit(handleOrder)} className='py-5 items-center'>
+            {/* Use the RadioGroupController */}
+            <ControllerRadio name="selectedPay" control={control} options={pays} />
+            <div className="text-center">
+              <BaseButton title='Đặt hàng' className='px-32 py-4 text-white font-medium rounded-xl mt-20 ' />
             </div>
 
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <TextInput placeholder=" Coupon code" className='w-full mt-5' {...register('voucher')} />
-              <BaseButton title='Apply coupon' className='w-full py-3 mt-7 text-white' />
-            </form>
 
-          </div>
+          </form>
+
+
+
+
         </div>
 
 

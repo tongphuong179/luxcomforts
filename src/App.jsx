@@ -23,6 +23,7 @@ import CategoryAdminScreen from "./features/admin/features/categories/CategoryAd
 import DiscountAdminScreen from "./features/admin/features/discount/DiscountAdminScreen"
 import VoucherAdminScreen from "./features/admin/features/voucher/VoucherAdminScreen"
 import OrderAdminScreen from "./features/admin/features/order/OrderAdminScreen"
+import PaymentSuccess from "./features/payment/PaymentSuccess"
 
 function App() {
 
@@ -37,6 +38,7 @@ function App() {
           <Route path="/shop" element={<ShopScreen />} />
           <Route path="/product/:productId" element={<ProductDetailScreen />} />
           <Route path="/about" element={<AboutScreen />} />
+          <Route path="/order/payment/" element={<PaymentSuccess />} />
           <Route path="/contact" element={<ContactScreen />} />
           <Route path="/login" element={<LoginScreen />} />
           <Route path="/register" element={<RegisterScreen />} />
