@@ -1,45 +1,50 @@
 import React, { useEffect } from 'react';
-import { useController } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 
-const ControllerRadio = ({ name, control, options }) => {
-    const {
-        field: { ref, value, onChange, onBlur },
-    } = useController({
-        name,
-        control,
 
-    });
 
+const ControllerRadioGroup = ({ name, control, options, onChange, defaultValue }) => {
 
     return (
-        <div className=" flex space-x-6 ">
-            {options.map((option) => (
-                <label
-                    key={option.value}
-                    className={`relative flex  border-[1px] border-primary cursor-pointer rounded-lg px-4 py-2 shadow-md focus:outline-none ${value === option.value
-                        ? 'bg-primary bg-opacity-75 text-white'
-                        : 'bg-white text-gray-900'
-                        }`}
-                >
-                    <input
-                        type="radio"
-                        value={option.value}
-                        ref={ref}
-                        onChange={onChange}
-                        onBlur={onBlur}
-                        checked={value === option.value}
-                        className="sr-only"
-                    />
-                    <span className="flex w-[220px] items-center justify-between">
-                        <span className="text-md font-medium">{option.label}</span>
-                        {value === option.value && (
-                            <span className="shrink-0 text-white">
-                                <CheckIcon className="h-6 w-6" />
-                            </span>
-                        )}
-                    </span>
-                </label>
-            ))}
+        <div className="flex space-x-6">
+            <Controller
+                name={name}
+                control={control}
+                defaultValue={defaultValue}
+                render={({ field }) => (
+                    <>
+                        {options.map((option) => (
+                            <label
+                                key={option.value}
+                                className={`relative flex border-[1px] border-primary cursor-pointer rounded-lg px-4 py-2 shadow-md focus:outline-none ${field.value === option.value
+                                    ? 'bg-primary bg-opacity-75 text-white'
+                                    : 'bg-white text-gray-900'
+                                    }`}
+                            >
+                                <input
+                                    type="radio"
+                                    value={option.value}
+                                    onChange={(e) => {
+                                        field.onChange(e);
+                                        onChange(option.value);
+                                    }}
+                                    onBlur={field.onBlur}
+                                    checked={field.value === option.value}
+                                    className="sr-only"
+                                />
+                                <span className="flex w-[220px] items-center justify-between">
+                                    <span className="text-md font-medium">{option.label}</span>
+                                    {field.value === option.value && (
+                                        <span className="shrink-0 text-white">
+                                            <CheckIcon className="h-6 w-6" />
+                                        </span>
+                                    )}
+                                </span>
+                            </label>
+                        ))}
+                    </>
+                )}
+            />
         </div>
     );
 };
@@ -59,4 +64,4 @@ function CheckIcon(props) {
     );
 }
 
-export default ControllerRadio;
+export default ControllerRadioGroup;
