@@ -29,7 +29,7 @@ const CartScreen = () => {
   const carts = useSelector(state => state.cart.carts)
 
   const [selectedDataCheckout, setSelectedDataCheckout] = useState([])
-  const [deliveryAddressId, setDeliveryAddressId] = useState(address ? address.id : 3);
+  const [deliveryAddressId, setDeliveryAddressId] = useState(address ? address?.id : 3);
   const { register, handleSubmit, control, onChange, watch, reset } = useForm()
 
   const formatCurrency = (value) => {
@@ -281,7 +281,7 @@ const CartScreen = () => {
           <div className='pt-10'>
             <SelectAddress
               user={currentUser}
-              address={address}
+              address={address ? address : []}
               onUpdateAddress={(newAddressId) => {
                 setDeliveryAddressId(newAddressId)
                 checkoutMutation.mutate({

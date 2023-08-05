@@ -141,7 +141,7 @@ const SelectAddress = ({ user, address, onUpdateAddress }) => {
                                 cacheOptions
                                 defaultOptions={provinces}
                                 defaultValue={
-                                    address.province_id
+                                    address?.province_id
                                         ? { value: address.province_id, label: address.province }
                                         : null
                                 }
@@ -160,7 +160,7 @@ const SelectAddress = ({ user, address, onUpdateAddress }) => {
                                 cacheOptions
                                 defaultOptions={districts}
                                 defaultValue={
-                                    address.district_id
+                                    address?.district_id
                                         ? { value: address.district_id, label: address.district }
                                         : null
                                 }
@@ -179,7 +179,7 @@ const SelectAddress = ({ user, address, onUpdateAddress }) => {
                                 cacheOptions
                                 defaultOptions={wards}
                                 defaultValue={
-                                    address.wardCode
+                                    address?.wardCode
                                         ? { value: address.wardCode, label: address.ward }
                                         : null
                                 }
