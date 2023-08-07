@@ -32,6 +32,7 @@ const RegisterScreen = () => {
             username: '',
             email: '',
             password: '',
+            confirmPassword:'',
             address: ''
         })
     }
@@ -70,6 +71,10 @@ const RegisterScreen = () => {
                 <div className='flex space-x-[94px] items-center'>
                     <label className='' htmlFor="">Password  <span className='text-red-600'>*</span></label>
                     <TextInput placeholder="Mật khẩu" {...register('password')} />
+                </div>
+                <div className='flex space-x-[94px] items-center'>
+                    <label className='' htmlFor="">Confirm Password  <span className='text-red-600'>*</span></label>
+                    <TextInput placeholder="Xác nhận mật khẩu" {...register('confirmPassword')} />
                 </div>
                 <div className='flex space-x-[108px] items-center'>
                     <label className='' htmlFor="">Address<span className='text-red-600'>*</span></label>
