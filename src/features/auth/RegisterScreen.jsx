@@ -41,7 +41,6 @@ const RegisterScreen = () => {
             }
         }
         mutation.mutate(registerData)
-
     }
     return (
         <div className='shadow-lg h-[800px] w-[800px] mx-auto my-14 bg-gray-100'>
@@ -90,6 +89,7 @@ const RegisterScreen = () => {
                     <div className='pl-20'>
                         <SelectAddress onSelectAddress={setSelectedAddress} />
                     </div>
+
                 </div>
 
 

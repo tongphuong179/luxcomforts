@@ -7,9 +7,7 @@ import { addCart, removeCart } from './state/CartSlice'
 import { TiDeleteOutline } from 'react-icons/ti'
 import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
-import { focusManager, useMutation, useQuery } from '@tanstack/react-query'
-import { applyVoucher } from './services/ApplyVoucher'
-import { axiosInstance } from '../../services/axios.config'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { checkout } from './services/Checkout'
 import { order } from './services/Order'
 import SelectAddress from './SelectAddress'
@@ -66,7 +64,7 @@ const CartScreen = () => {
     deliveryType: 'SHOP',
     voucherCode: "",
     deliveryAddress: {
-      id: userAddress ? userAddress[0]?.value : 1
+      id: userAddress && userAddress[0]?.value
     },
     user: {
       id: currentUser.id
@@ -329,7 +327,7 @@ const CartScreen = () => {
                   name='address'
                   control={control}
                   options={userAddress}
-                  defaultValue={userAddress[0].value}
+                  defaultValue={userAddress[0]}
                   onChange={(address) => {
                     setSelectedAddress(address); // Cập nhật giá trị địa chỉ mới khi người dùng thay đổi
                     handleSelectAddress(address);
