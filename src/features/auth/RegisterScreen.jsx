@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import BaseButton from '../../components/button/BaseButton'
 import TextInput from '../../components/input/TextInput'
@@ -6,17 +6,20 @@ import { Link } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import { RegisterUser } from './services/Register'
 import toast, { Toaster } from 'react-hot-toast'
+import SelectAddress from '../cart/SelectAddress'
 
 
 
 
 const RegisterScreen = () => {
     const { register, reset, handleSubmit, watch, formState: { errors } } = useForm()
+    const [selectedAddress, setSelectedAddress] = useState({});
 
 
     const mutation = useMutation(RegisterUser, {
         onSuccess(data) {
             toast.success("Bạn đã đăng ký tài khoản thành công")
+            reset('')
             console.log(data)
         },
         onError() {
@@ -25,18 +28,23 @@ const RegisterScreen = () => {
     })
 
     const onSubmit = (data) => {
-        mutation.mutate(data)
-        reset({
-            name: '',
-            phone: '',
-            username: '',
-            email: '',
-            password: '',
-            address: ''
-        })
+        const registerData = {
+            ...data,
+            deliveryAddress: {
+                address: selectedAddress.address,
+                province_id: selectedAddress.province.value,
+                province: selectedAddress.province.label,
+                district_id: selectedAddress.district.value,
+                district: selectedAddress.district.label,
+                wardCode: selectedAddress.ward.value,
+                ward: selectedAddress.ward.label
+            }
+        }
+        mutation.mutate(registerData)
+
     }
     return (
-        <div className='shadow-lg h-[800px] w-[600px] mx-auto my-14 bg-gray-100'>
+        <div className='shadow-lg h-[800px] w-[800px] mx-auto my-14 bg-gray-100'>
             <div><Toaster position="top-center"
                 reverseOrder={false} /></div>
             <div className="flex flex-col space-y-8 pt-8">
@@ -51,29 +59,37 @@ const RegisterScreen = () => {
             </div>
             <form className='px-6 pt-16 space-y-8' onSubmit={handleSubmit(onSubmit)}>
 
-                <div className='flex space-x-[118px] items-center'>
-                    <label className='' htmlFor="">Name <span className='text-red-600'>*</span></label>
-                    <TextInput placeholder="Họ và tên" {...register('name')} />
-                </div>
-                <div className='flex space-x-[88px] items-center'>
-                    <label className='' htmlFor="">Username <span className='text-red-600'>*</span></label>
-                    <TextInput placeholder="Tên đăng nhập" {...register('username')} />
-                </div>
-                <div className='flex space-x-[116px] items-center'>
-                    <label className='' htmlFor="">Phone <span className='text-red-600'>*</span></label>
-                    <TextInput placeholder="Số điện thoại" {...register('phone')} />
-                </div>
-                <div className='flex space-x-[122px] items-center'>
-                    <label className='' htmlFor="">Email  <span className='text-red-600'>*</span></label>
-                    <TextInput placeholder="Email" {...register('email')} />
-                </div>
-                <div className='flex space-x-[94px] items-center'>
-                    <label className='' htmlFor="">Password  <span className='text-red-600'>*</span></label>
-                    <TextInput placeholder="Mật khẩu" {...register('password')} />
-                </div>
-                <div className='flex space-x-[108px] items-center'>
-                    <label className='' htmlFor="">Address<span className='text-red-600'>*</span></label>
-                    <TextInput placeholder="Địa chỉ" {...register('address')} />
+                <div className="grid grid-cols-2 gap">
+                    <div className='px-2  space-y-8'>
+                        <div className='flex space-x-[80px] items-center'>
+                            <label className='flex' htmlFor="">Name <span className='text-red-600'>*</span></label>
+                            <TextInput placeholder="Họ và tên"  {...register('name')} />
+                        </div>
+                        <div className='flex space-x-[50px] items-center'>
+                            <label className='flex' htmlFor=""> Username <span className='text-red-600'>*</span></label>
+                            <TextInput placeholder="Tên đăng nhập" {...register('username')} />
+                        </div>
+                        <div className='flex space-x-[78px] items-center'>
+                            <label className='flex' htmlFor="">Phone <span className='text-red-600'>*</span></label>
+                            <TextInput placeholder="Số điện thoại" {...register('phone')} />
+                        </div>
+                        <div className='flex space-x-[84px] items-center'>
+                            <label className='flex' htmlFor="">Email  <span className='text-red-600'>*</span></label>
+                            <TextInput placeholder="Email" {...register('email')} />
+                        </div>
+                        <div className='flex space-x-[54px] items-center'>
+                            <label className='flex' htmlFor="">Password  <span className='text-red-600'>*</span></label>
+                            <TextInput type="password" placeholder="Mật khẩu" {...register('password')} />
+                        </div>
+                        <div className='flex space-x-[54px] items-center'>
+                            <label className='flex' htmlFor="">ConFirm Password  <span className='text-red-600'>*</span></label>
+                            <TextInput type="password" placeholder="Nhập lại mật khẩu" {...register('confirmPassword')} />
+                        </div>
+
+                    </div>
+                    <div className='pl-20'>
+                        <SelectAddress onSelectAddress={setSelectedAddress} />
+                    </div>
                 </div>
 
 

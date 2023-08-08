@@ -16,6 +16,8 @@ import SelectAddress from './SelectAddress'
 import { pays, shippings } from './constant/constant'
 import ControllerRadioGroup from '../../components/input/radio/ControllerRadio'
 import Loading from '../../components/loading/Loading'
+import { getAddressByUser } from './services/getAddressByUser'
+import ControllerSelect from '../../components/select/ControllerSelect'
 
 
 
@@ -28,25 +30,43 @@ const CartScreen = () => {
   const address = useSelector(state => state.auth.address)
   const carts = useSelector(state => state.cart.carts)
 
+
   const [selectedDataCheckout, setSelectedDataCheckout] = useState([])
-  const [deliveryAddressId, setDeliveryAddressId] = useState(address ? address?.id : 3);
+  const [selectedAddress, setSelectedAddress] = useState(null);
+
+
   const { register, handleSubmit, control, onChange, watch, reset } = useForm()
 
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
   }
 
+
+  const { data: userAddress, isSuccess } = useQuery(
+    ['address', currentUser.id],
+    () => getAddressByUser(currentUser.id),
+    {
+      select: (data) =>
+        data.map(item => ({
+          value: item.id,
+          label: `${item.address},${item.ward}, ${item.district} ,${item.province} `
+        }))
+
+    }
+  )
+
+
   const cartCheckout = carts.map(cart => ({
     productId: cart.id,
     quantity: cart.quantity
   }))
-  console.log(cartCheckout)
+
   const dataCheckout = {
     paymentType: "COD",
     deliveryType: 'SHOP',
     voucherCode: "",
     deliveryAddress: {
-      id: deliveryAddressId
+      id: userAddress ? userAddress[0]?.value : 1
     },
     user: {
       id: currentUser.id
@@ -76,18 +96,40 @@ const CartScreen = () => {
       }
     },
     onError(err) {
-      alert(err)
+
     }
 
   })
+
+
   useEffect(() => {
-    checkoutMutation.mutate(dataCheckout);
-  }, []);
+    if (userAddress) {
+      checkoutMutation.mutate(dataCheckout);
+    }
+
+  }, [userAddress]);
+
+
+  const handleSelectAddress = (address) => {
+    console.log(address);
+    const dataCheckoutUpdate = {
+      ...dataCheckout,
+      deliveryAddress: {
+        id: address.value
+      }
+    }
+    checkoutMutation.mutate(dataCheckoutUpdate)
+
+    setSelectedAddress(address);
+  }
 
   const handleSelectShip = (newValue) => {
     const dataCheckoutUpdate = {
       ...dataCheckout,
-      deliveryType: newValue
+      deliveryType: newValue,
+      deliveryAddress: {
+        id: selectedAddress ? selectedAddress.value : null // Sử dụng địa chỉ mới nhất hoặc null nếu chưa có địa chỉ mới
+      }
     }
     checkoutMutation.mutate(dataCheckoutUpdate)
   }
@@ -273,24 +315,29 @@ const CartScreen = () => {
                 control={control}
                 options={shippings}
                 defaultValue="SHOP"
+                value={selectedAddress}
                 onChange={(newValue) => handleSelectShip(newValue)
                 }
               />
             </div>
           </div>
           <div className='pt-10'>
-            <SelectAddress
-              user={currentUser}
-              address={address ? address : []}
-              onUpdateAddress={(newAddressId) => {
-                setDeliveryAddressId(newAddressId)
-                checkoutMutation.mutate({
-                  ...dataCheckout,
-                  deliveryAddress: {
-                    id: newAddressId
-                  },
-                })
-              }} />
+            <p className='text-xl font-medium'>Địa chỉ giao hàng</p>
+            {userAddress &&
+              <div className='pt-10'>
+                <ControllerSelect
+                  name='address'
+                  control={control}
+                  options={userAddress}
+                  defaultValue={userAddress[0].value}
+                  onChange={(address) => {
+                    setSelectedAddress(address); // Cập nhật giá trị địa chỉ mới khi người dùng thay đổi
+                    handleSelectAddress(address);
+
+                  }}
+                />
+              </div>
+            }
           </div>
         </div>
 
@@ -317,7 +364,7 @@ const CartScreen = () => {
             </div>
             <div className='flex justify-between  border-b-2'>
               <p>Phí vận chuyển</p>
-              <p>{selectedDataCheckout && formatCurrency(selectedDataCheckout.deliveryFee)}</p>
+              <p>{selectedDataCheckout ? formatCurrency(selectedDataCheckout.deliveryFee) : 0}</p>
             </div>
             <div className='flex justify-between  border-b-2'>
               <p>Khuyến mãi</p>
@@ -325,7 +372,7 @@ const CartScreen = () => {
             </div>
             <div className='flex justify-between  border-b-2'>
               <p>Số tiền bạn cần thanh toán</p>
-              <p>{selectedDataCheckout && formatCurrency(selectedDataCheckout.total)}</p>
+              <p>{selectedDataCheckout ? formatCurrency(selectedDataCheckout.total) : totals}</p>
             </div>
           </div>
 

@@ -12,49 +12,21 @@ import { addAddress } from '../auth/state/AuthSlice';
 
 
 
-const SelectAddress = ({ user, address, onUpdateAddress }) => {
+const SelectAddress = ({ onSelectAddress }) => {
 
-    console.log(address)
     const [selectedProvince, setSelectedProvince] = useState({});
     const [selectedDistrict, setSelectedDistrict] = useState({});
     const [selectedWard, setSelectedWard] = useState({});
-
-
-    const dispatch = useDispatch()
-
-    const { register, handleSubmit, setValue } = useForm()
+    const [address, setAddress] = useState('');
 
     useEffect(() => {
-        setValue('address', address.address); // Thiết lập giá trị cho trường address
-        setValue('phone', address.phone); // Thiết lập giá trị cho trường phone
-        setValue('name', address.name); // Thiết lập giá trị cho trường name
-    }, [address]);
-
-
-    const mutation = useMutation(createAddressDelivery, {
-        onSuccess(data) {
-            dispatch(addAddress(data))
-            onUpdateAddress(data.id);
-
-        }
-    })
-
-    const onSubmit = (data) => {
-        const addressData = {
-            ...data,
-            user: {
-                id: user.id
-            },
-            province_id: selectedProvince.value,
-            province: selectedProvince.label,
-            district_id: selectedDistrict.value,
-            district: selectedDistrict.label,
-            wardCode: selectedWard.value,
-            ward: selectedWard.label
-        }
-        console.log(addressData)
-        mutation.mutate(addressData)
-    }
+        onSelectAddress({
+            province: selectedProvince,
+            district: selectedDistrict,
+            ward: selectedWard,
+            address: address,
+        });
+    }, [selectedProvince, selectedDistrict, selectedWard, address]);
 
     // Tỉnh/Thành Phố
     const { data: provinces = [], isSuccess } = useQuery(["province"], getProvinces, {
@@ -132,87 +104,71 @@ const SelectAddress = ({ user, address, onUpdateAddress }) => {
 
     return (
         <div>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <div className='flex space-x-20'>
-                    <div>
-                        <p className='py-8 text-xl font-medium'>Địa chỉ giao hàng</p>
-                        <div className=''>
-                            <AsyncSelect
-                                cacheOptions
-                                defaultOptions={provinces}
-                                defaultValue={
-                                    address?.province_id
-                                        ? { value: address.province_id, label: address.province }
-                                        : null
-                                }
-                                loadOptions={loadProvinceOptions}
-                                value={provinces.find((province) => province.value === selectedProvince.value)}
-                                onChange={(selectedOption) => {
-                                    setSelectedProvince(selectedOption ? { ...selectedOption } : '');
+            <div className='flex space-x-20'>
+                <div>
+                    <div className=''>
+                        <AsyncSelect
+                            cacheOptions
+                            defaultOptions={provinces}
+                            loadOptions={loadProvinceOptions}
+                            value={provinces.find((province) => province.value === selectedProvince.value)}
+                            onChange={(selectedOption) => {
+                                setSelectedProvince(selectedOption ? { ...selectedOption } : '');
+                                onSelectAddress({
+                                    province: selectedProvince,
+                                    district: selectedOption ? { ...selectedOption } : '',
+                                    ward: selectedWard,
+                                });
 
-                                }}
-
-                                placeholder='Chọn tỉnh/thành phố'
-                            />
-                        </div>
-                        <div className=' pt-8'>
-                            <AsyncSelect
-                                cacheOptions
-                                defaultOptions={districts}
-                                defaultValue={
-                                    address?.district_id
-                                        ? { value: address.district_id, label: address.district }
-                                        : null
-                                }
-                                loadOptions={loadDistrictOptions}
-                                value={districts.find((district) => district.value === selectedDistrict.value)}
-                                onChange={(selectedOption) => {
-                                    setSelectedDistrict(selectedOption ? { ...selectedOption } : '');
-
-                                }}
-
-                                placeholder='Chọn huyện/quận'
-                            />
-                        </div>
-                        <div className=' pt-8'>
-                            <AsyncSelect
-                                cacheOptions
-                                defaultOptions={wards}
-                                defaultValue={
-                                    address?.wardCode
-                                        ? { value: address.wardCode, label: address.ward }
-                                        : null
-                                }
-                                loadOptions={loadWardOptions}
-                                value={wards.find((ward) => ward.value === selectedWard.value)}
-                                onChange={(selectedOption) =>
-                                    setSelectedWard(selectedOption ? { ...selectedOption } : '')
-                                }
-                                placeholder='Chọn xã/phường'
-                            />
-                        </div>
-                        <div className='pt-8'>
-                            <TextInput placeholder="Số nhà, tên đường/thôn xóm" className='px-2 py-[6px] bg-white ' {...register('address')} />
-                        </div>
-
-                        <div>{ }</div>
+                            }}
+                            placeholder='Chọn tỉnh/thành phố'
+                        />
                     </div>
-                    <div>
-                        <p className='py-8 text-xl font-medium'>Thông tin liên hệ</p>
-                        <div className=' flex items-center space-x-4'>
-                            <p>Số điện thoại</p>
-                            <TextInput className='px-2 py-[6px] bg-white w-[200px]' {...register('phone')} />
-                        </div>
-                        <div className='flex items-center pt-8 space-x-[42px]'>
-                            <p>Họ và tên</p>
-                            <TextInput className='px-2 py-[6px] bg-whit w-[200px]'  {...register('name')} />
-                        </div>
+                    <div className=' pt-8'>
+                        <AsyncSelect
+                            cacheOptions
+                            defaultOptions={districts}
+                            loadOptions={loadDistrictOptions}
+                            value={districts.find((district) => district.value === selectedDistrict.value)}
+                            onChange={(selectedOption) => {
+                                setSelectedDistrict(selectedOption ? { ...selectedOption } : '');
+                                onSelectAddress({
+                                    province: selectedProvince,
+                                    district: selectedDistrict,
+                                    ward: selectedOption ? { ...selectedOption } : '',
+                                });
+
+                            }}
+
+                            placeholder='Chọn huyện/quận'
+                        />
                     </div>
+                    <div className=' pt-8'>
+                        <AsyncSelect
+                            cacheOptions
+                            defaultOptions={wards}
+                            loadOptions={loadWardOptions}
+                            value={wards.find((ward) => ward.value === selectedWard.value)}
+                            onChange={(selectedOption) => {
+                                setSelectedWard(selectedOption ? { ...selectedOption } : '')
+                                onSelectAddress(selectedOption ? { ...selectedOption } : '');
+                            }
+                            }
+                            placeholder='Chọn xã/phường'
+                        />
+                    </div>
+                    <div className='pt-8'>
+                        <TextInput
+                            placeholder="Số nhà, tên đường/thôn xóm"
+                            className='px-2 py-[6px] bg-white '
+                            onChange={(e) => setAddress(e.target.value)}
+                        />
+                    </div>
+
+
                 </div>
-                <div className='text-center pt-10'>
-                    <BaseButton title='Cập nhật địa chỉ giao hàng' className='px-4 py-3 text-white rounded-lg w-full' />
-                </div>
-            </form>
+
+            </div>
         </div>
     );
 };

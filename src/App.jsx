@@ -24,6 +24,7 @@ import DiscountAdminScreen from "./features/admin/features/discount/DiscountAdmi
 import VoucherAdminScreen from "./features/admin/features/voucher/VoucherAdminScreen"
 import OrderAdminScreen from "./features/admin/features/order/OrderAdminScreen"
 import PaymentSuccess from "./features/payment/PaymentSuccess"
+import OrderScreen from "./features/order/OrderScreen"
 
 function App() {
 
@@ -38,11 +39,12 @@ function App() {
           <Route path="/shop" element={<ShopScreen />} />
           <Route path="/product/:productId" element={<ProductDetailScreen />} />
           <Route path="/about" element={<AboutScreen />} />
-          <Route path="/order/payment/" element={<PaymentSuccess />} />
+          <Route path="/payment/" element={<PaymentSuccess />} />
           <Route path="/contact" element={<ContactScreen />} />
           <Route path="/login" element={<LoginScreen />} />
           <Route path="/register" element={<RegisterScreen />} />
           <Route path="/cart" element={<Protected isLoggedIn={isLoggedIn}><CartScreen /></Protected>} />
+          <Route path="/order" element={<Protected isLoggedIn={isLoggedIn}><OrderScreen /></Protected>} />
         </Route>
 
         {/* Add curly braces to enclose LayoutAdmin */}

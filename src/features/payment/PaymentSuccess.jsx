@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { axiosInstance } from '../../services/axios.config';
 
 const PaymentSuccess = () => {
@@ -31,7 +31,13 @@ const PaymentSuccess = () => {
 
 
     return (
-        <div className='text-center text-3xl font-bold py-[200px]'>Bạn đã thanh toán thành công</div>
+        <div>
+            <div className='text-center text-3xl font-bold pt-[200px]'>Bạn đã thanh toán thành công</div>
+            <div className='pt-8 pb-10 text-xl text-primary text-center'>
+                <Link to='/order'>Bạn có thể xem chi tiết đơn hàng của mình</Link>
+            </div>
+
+        </div>
     )
 }
 
