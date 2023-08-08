@@ -29,6 +29,7 @@ const CartScreen = () => {
 
 
   const [selectedDataCheckout, setSelectedDataCheckout] = useState([])
+  const [selectedShip, setSelectedShip] = useState()
   const [selectedAddress, setSelectedAddress] = useState(null);
 
 
@@ -107,10 +108,23 @@ const CartScreen = () => {
   }, [userAddress]);
 
 
+
+
+  const handleSelectShip = (ship) => {
+    const dataCheckoutUpdate = {
+      ...dataCheckout,
+      deliveryType: ship,
+      deliveryAddress: {
+        id: selectedAddress ? selectedAddress.value : userAddress[0]?.value// Sử dụng địa chỉ mới nhất hoặc null nếu chưa có địa chỉ mới
+      }
+    }
+    checkoutMutation.mutate(dataCheckoutUpdate)
+  }
   const handleSelectAddress = (address) => {
     console.log(address);
     const dataCheckoutUpdate = {
       ...dataCheckout,
+      deliveryType: selectedShip,
       deliveryAddress: {
         id: address.value
       }
@@ -120,20 +134,13 @@ const CartScreen = () => {
     setSelectedAddress(address);
   }
 
-  const handleSelectShip = (newValue) => {
-    const dataCheckoutUpdate = {
-      ...dataCheckout,
-      deliveryType: newValue,
-      deliveryAddress: {
-        id: selectedAddress ? selectedAddress.value : null // Sử dụng địa chỉ mới nhất hoặc null nếu chưa có địa chỉ mới
-      }
-    }
-    checkoutMutation.mutate(dataCheckoutUpdate)
-  }
-
   const handleApply = async (data) => {
     const dataCheckoutUpdate = {
       ...dataCheckout,
+      deliveryType: selectedShip,
+      deliveryAddress: {
+        id: selectedAddress ? selectedAddress.value : userAddress[0]?.value// Sử dụng địa chỉ mới nhất hoặc null nếu chưa có địa chỉ mới
+      },
       voucherCode: data.voucher
     }
     console.log(dataCheckoutUpdate)
@@ -313,8 +320,10 @@ const CartScreen = () => {
                 options={shippings}
                 defaultValue="SHOP"
                 value={selectedAddress}
-                onChange={(newValue) => handleSelectShip(newValue)
-                }
+                onChange={(ship) => {
+                  setSelectedShip(ship)
+                  handleSelectShip(ship)
+                }}
               />
             </div>
           </div>

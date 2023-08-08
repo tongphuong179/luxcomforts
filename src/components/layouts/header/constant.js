@@ -19,4 +19,9 @@ export const navigateItem = [
     title: "CONTACT US",
     link: "/contact",
   },
+  {
+    id: 5,
+    title: "ORDER",
+    link: "/order",
+  },
 ];
