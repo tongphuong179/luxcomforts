@@ -25,7 +25,6 @@ const CartScreen = () => {
   const dispatch = useDispatch()
 
   const currentUser = useSelector(state => state.auth.currentUser)
-  const address = useSelector(state => state.auth.address)
   const carts = useSelector(state => state.cart.carts)
 
 
