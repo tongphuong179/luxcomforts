@@ -14,6 +14,7 @@ const ModalOrder = () => {
     const mutation = useMutation(() => cancelOrder(modalInfo), {
         onSuccess(data) {
             alert('đơn hàng đã được hủy')
+            dispatch(closeModal())
         }
     })
 
