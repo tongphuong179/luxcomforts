@@ -1,29 +1,20 @@
 import { useQuery } from '@tanstack/react-query'
 import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { getOrderByUser } from './services/GetOrderByUser'
-import BaseButton from '../../components/button/BaseButton'
-import ModalDeleteProduct from '../admin/features/products/ModalDeleteProduct'
-import ModalOrder from './ModalOrder'
-import { openModal } from '../../components/modal/state/ModalSlice'
-import { order } from '../cart/services/Order';
+import { useParams } from 'react-router-dom'
+import { getOrderById } from '../../../order/services/GetOrderById'
+import { getOrderByUser } from '../../../order/services/GetOrderByUser'
 import { Link } from 'react-router-dom'
 
-const OrderScreen = () => {
-
-
-
-    const currentUser = useSelector(state => state.auth.currentUser)
-    const userId = currentUser.id
-
+const OrderUser = () => {
+    const { userId } = useParams()
+    console.log(userId)
     const { data, isError } = useQuery(['order', userId], () => getOrderByUser(userId))
-
+    console.log(data)
     if (isError) {
         return (
             <div>Bạn chưa có đơn hàng nào</div>
         )
     }
-
     return (
         <div className='px-[60px] py-[100px]'>
             <table className='w-full'>
@@ -85,7 +76,7 @@ const OrderScreen = () => {
                                 </td>
                                 <td className="border-b border-slate-700 py-10 px-4 text-center">
 
-                                    <Link to={`/orderDetail/${order.id}`}>
+                                    <Link to={`/admin/orderDetail/${order.id}`}>
                                         <p className='text-primary'>Xem chi tiết</p>
                                     </Link>
 
@@ -94,6 +85,7 @@ const OrderScreen = () => {
                             </tr>
                         )
                     })}
+
                 </tbody>
             </table>
 
@@ -102,4 +94,4 @@ const OrderScreen = () => {
     )
 }
 
-export default OrderScreen
+export default OrderUser

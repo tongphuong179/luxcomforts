@@ -4,6 +4,7 @@ import { getAllUser } from './services/GetAllUser'
 import BaseButton from '../../../../components/button/BaseButton'
 import { useState } from 'react'
 import { updateRoleUser } from './services/UpdateRoleUser'
+import { Link } from 'react-router-dom'
 
 const UserAdminScreen = () => {
 
@@ -58,6 +59,7 @@ const UserAdminScreen = () => {
                         <th className="border border-slate-900 bg-slate-700 text-white py-3 text-xl">Point</th>
                         <th className="border border-slate-900 bg-slate-700 text-white py-3 text-xl">Roles</th>
                         <th className="border border-slate-900 bg-slate-700 text-white py-3 text-xl w-[160px]">Hành động</th>
+                        <th className="border border-slate-900 bg-slate-700 text-white py-3 text-xl ">Đơn hàng</th>
                     </tr>
 
                 </thead>
@@ -78,6 +80,11 @@ const UserAdminScreen = () => {
                                         <BaseButton title="MAKE ADMIN" className='ml-[6px] px-5 py-2 bg-slate-700 text-white text-sm rounded-2xl' handleClick={() => handleClickUser(user)} />
                                     )}
 
+                                </td>
+                                <td className="border border-slate-700 py-[20px] pl-[16px]">
+                                    <Link to={`/admin/orderUser/${user.id}`}>
+                                        <p className='text-primary'>Xem chi tiết</p>
+                                    </Link>
                                 </td>
                             </tr>
                         )

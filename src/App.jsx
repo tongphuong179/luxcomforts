@@ -25,6 +25,9 @@ import VoucherAdminScreen from "./features/admin/features/voucher/VoucherAdminSc
 import OrderAdminScreen from "./features/admin/features/order/OrderAdminScreen"
 import PaymentSuccess from "./features/payment/PaymentSuccess"
 import OrderScreen from "./features/order/OrderScreen"
+import OrderDetail from "./features/order/OrderDetail"
+import OrderAdminDetail from "./features/admin/features/order/OrderAdminDetail"
+import OrderUser from "./features/admin/features/order/OrderUser"
 
 function App() {
 
@@ -45,6 +48,8 @@ function App() {
           <Route path="/register" element={<RegisterScreen />} />
           <Route path="/cart" element={<Protected isLoggedIn={isLoggedIn}><CartScreen /></Protected>} />
           <Route path="/order" element={<Protected isLoggedIn={isLoggedIn}><OrderScreen /></Protected>} />
+          <Route path="/orderDetail/:orderId" element={<Protected isLoggedIn={isLoggedIn}><OrderDetail /></Protected>} />
+
         </Route>
 
         {/* Add curly braces to enclose LayoutAdmin */}
@@ -55,6 +60,8 @@ function App() {
           <Route path="discount" element={<DiscountAdminScreen />} />
           <Route path="voucher" element={<VoucherAdminScreen />} />
           <Route path="order" element={<OrderAdminScreen />} />
+          <Route path="orderDetail/:orderId" element={<Protected isLoggedIn={isLoggedIn}><OrderAdminDetail /></Protected>} />
+          <Route path="orderUser/:userId" element={<Protected isLoggedIn={isLoggedIn}><OrderUser /></Protected>} />
         </Route>
       </Routes>
     </QueryClientProvider>

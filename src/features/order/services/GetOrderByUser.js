@@ -1,6 +1,6 @@
 import { axiosInstance } from "../../../services/axios.config";
 
-export const getOrderById = async (id) => {
+export const getOrderByUser = async (id) => {
   try {
     const res = await axiosInstance.get(`/order/user/${id}`);
     return res.data;

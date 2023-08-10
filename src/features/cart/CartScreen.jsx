@@ -16,6 +16,7 @@ import ControllerRadioGroup from '../../components/input/radio/ControllerRadio'
 import Loading from '../../components/loading/Loading'
 import { getAddressByUser } from './services/getAddressByUser'
 import ControllerSelect from '../../components/select/ControllerSelect'
+import { formatCurrency } from '../../services/formatCurrency'
 
 
 
@@ -35,9 +36,7 @@ const CartScreen = () => {
 
   const { register, handleSubmit, control, onChange, watch, reset } = useForm()
 
-  const formatCurrency = (value) => {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
-  }
+
 
 
   const { data: userAddress, isSuccess } = useQuery(
