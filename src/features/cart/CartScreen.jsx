@@ -17,6 +17,8 @@ import Loading from '../../components/loading/Loading'
 import { getAddressByUser } from './services/getAddressByUser'
 import ControllerSelect from '../../components/select/ControllerSelect'
 import { formatCurrency } from '../../services/formatCurrency'
+import { openModal } from '../../components/modal/state/ModalSlice'
+import ModalAddress from './ModalAddress';
 
 
 
@@ -91,6 +93,8 @@ const CartScreen = () => {
       } else {
         alert("Bạn đã đặt hàng thành công ")
       }
+
+      dispatch(removeCart())
     },
     onError(err) {
 
@@ -343,6 +347,7 @@ const CartScreen = () => {
                 />
               </div>
             }
+            <BaseButton handleClick={() => dispatch(openModal())} title="Thêm địa chỉ giao hàng " className='px-4 py-2 rounded-lg text-white mt-10' />
           </div>
         </div>
 
@@ -400,9 +405,11 @@ const CartScreen = () => {
             </div>
           </form>
         </div>
-
+        <ModalAddress />
 
       </div>
+
+
 
     </div>
   )

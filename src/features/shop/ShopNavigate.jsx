@@ -4,12 +4,14 @@ import { BsChevronDown } from 'react-icons/bs'
 import { shopNavigateItems } from './constant'
 import { useQuery } from '@tanstack/react-query'
 import { getAllCategory } from './services/GetAllCategory'
+import { useNavigate } from 'react-router-dom'
 
 
 const ShopNavigate = () => {
 
     const { data } = useQuery({ queryKey: ['category'], queryFn: getAllCategory })
     console.log(data);
+    const navigate = useNavigate()
     return (
         <div>
             <div className='text-gray-600 text-xl font-medium'>BROWSE</div>
@@ -22,7 +24,7 @@ const ShopNavigate = () => {
                                 <>
                                     <Disclosure.Button className="flex w-full text-gray-700 justify-between py-2 mb-1  text-left text-lg
                      focus:outline-none focus-visible:ring ">
-                                        <span className='text-gray-700'>{item.name}</span>
+                                        <span className='text-gray-700' onClick={() => navigate(`/category/${item.id}`)}>{item.name}</span>
                                         <BsChevronDown
                                             className={`${open ? 'rotate-180 transform' : ''
                                                 } `}

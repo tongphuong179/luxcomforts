@@ -28,6 +28,8 @@ import OrderScreen from "./features/order/OrderScreen"
 import OrderDetail from "./features/order/OrderDetail"
 import OrderAdminDetail from "./features/admin/features/order/OrderAdminDetail"
 import OrderUser from "./features/admin/features/order/OrderUser"
+import ChangePasswordScreen from "./features/auth/ChangePasswordScreen"
+import ProductCategoryScreen from "./features/shop/ProductCategoryScreen"
 
 function App() {
 
@@ -41,6 +43,7 @@ function App() {
           <Route path="/" element={<HomeScreen />} />
           <Route path="/shop" element={<ShopScreen />} />
           <Route path="/product/:productId" element={<ProductDetailScreen />} />
+          <Route path="/category/:categoryId" element={<ProductCategoryScreen />} />
           <Route path="/about" element={<AboutScreen />} />
           <Route path="/payment/" element={<PaymentSuccess />} />
           <Route path="/contact" element={<ContactScreen />} />
@@ -49,6 +52,7 @@ function App() {
           <Route path="/cart" element={<Protected isLoggedIn={isLoggedIn}><CartScreen /></Protected>} />
           <Route path="/order" element={<Protected isLoggedIn={isLoggedIn}><OrderScreen /></Protected>} />
           <Route path="/orderDetail/:orderId" element={<Protected isLoggedIn={isLoggedIn}><OrderDetail /></Protected>} />
+          <Route path="/change-password" element={<Protected isLoggedIn={isLoggedIn}><ChangePasswordScreen /></Protected>} />
 
         </Route>
 

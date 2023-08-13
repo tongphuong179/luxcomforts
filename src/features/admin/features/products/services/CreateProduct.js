@@ -14,7 +14,7 @@ export const createProduct = async (product) => {
   setAccessToken(token);
 
   try {
-    const res = await axiosInstance.post("/products", product);
+    const res = await axiosInstance.post("/products/add", product);
     return res.data;
   } catch (error) {
     throw new Error(error.response.data);

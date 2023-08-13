@@ -7,15 +7,17 @@ import { ImCart } from 'react-icons/im'
 import { ImUser } from 'react-icons/im'
 import { BiSearch } from 'react-icons/bi'
 import { navigateItem } from './constant'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { Menu } from '@headlessui/react'
 import { logoutSuccess } from '../../../features/auth/state/AuthSlice'
+import { removeCart } from '../../../features/cart/state/CartSlice'
 
 const Header = () => {
     const currentUser = useSelector(state => state.auth.currentUser)
     const carts = useSelector(state => state.cart.carts)
     const dispatch = useDispatch()
+    const navigate = useNavigate()
 
 
     const [showHeader, setShowHeader] = useState('')
@@ -66,20 +68,35 @@ const Header = () => {
                     })}
                     <BiSearch size={22} className='text-gray-700 hover:cursor-pointer' />
                 </div>
-                <div className='flex pr-4 space-x-4'>
+                <div className='flex pr-4 space-x-4 relative'>
 
                     {currentUser ? (<div className='pt-1'>
                         <Menu>
 
-                            <Menu.Button>{currentUser.username}</Menu.Button>
-                            <Menu.Items className="bg-slate-100">
+                            <Menu.Button >{currentUser.username}</Menu.Button>
+                            <Menu.Items className="bg-slate-300 pl-1 py-2 space-y-2 rounded-lg absolute top-10 left-[-40px]">
                                 <Menu.Item>
                                     {({ active }) => (
                                         <div
-                                            className={`${active && 'bg-primary cursor-pointer'}`}
-                                            onClick={() => dispatch(logoutSuccess())}
+                                            className={`${active && ' bg-slate-600 text-white cursor-pointer'}`}
+                                            onClick={() => {
+                                                dispatch(logoutSuccess())
+                                                dispatch(removeCart())
+                                            }}
                                         >
                                             Logout
+                                        </div>
+                                    )}
+                                </Menu.Item>
+                                <Menu.Item>
+                                    {({ active }) => (
+                                        <div
+                                            className={`${active && 'bg-slate-600 text-white cursor-pointer'}`}
+                                            onClick={() => {
+                                                navigate('change-password')
+                                            }}
+                                        >
+                                            Change password
                                         </div>
                                     )}
                                 </Menu.Item>

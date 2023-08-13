@@ -1,6 +1,7 @@
 import React from 'react';
 import BaseButton from '../../components/button/BaseButton';
 import { useNavigate } from 'react-router-dom';
+import { formatCurrency } from '../../services/formatCurrency';
 
 const ProductCard = ({ product, discountPrice }) => { // Updated to accept `discountPrice` prop
     const navigate = useNavigate();
@@ -26,11 +27,11 @@ const ProductCard = ({ product, discountPrice }) => { // Updated to accept `disc
 
                     {discountPrice ? ( // Render the discounted price if discountPrice is available
                         <>
-                            <p className='font-light text-gray-500 line-through'>{product.price}</p>
-                            <p>{discountPrice} vnđ</p> {/* Use the discountPrice prop */}
+                            <p className='font-light text-gray-500 line-through'>{formatCurrency(product.price)}</p>
+                            <p>{formatCurrency(discountPrice)} </p> {/* Use the discountPrice prop */}
                         </>
                     ) : (
-                        <p>{product.price} vnđ</p>
+                        <p>{formatCurrency(product.price)}</p>
                     )}
 
                 </div>

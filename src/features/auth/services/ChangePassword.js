@@ -1,7 +1,7 @@
 import { store } from "../../../store/store";
 import { axiosInstance, setAccessToken } from "../../../services/axios.config";
 
-export const createAddressDelivery = async (userId, addressData) => {
+export const changePassword = async (passwordData) => {
   const isLoggedIn = store.getState().auth.isLogin;
 
   if (!isLoggedIn) {
@@ -11,10 +11,7 @@ export const createAddressDelivery = async (userId, addressData) => {
 
   setAccessToken(token);
   try {
-    const res = await axiosInstance.post(
-      `/delivery_address/add/${userId}`,
-      addressData
-    );
+    const res = await axiosInstance.post("/users/changePassword", passwordData);
     return res.data;
   } catch (error) {
     throw new Error(error);
