@@ -20,12 +20,14 @@ const OrderAdminDetail = () => {
     const { data, isError, isSuccess } = useQuery({ queryKey: ['orderDetail', orderId], queryFn: () => getOrderById(orderId) })
     console.log(data)
 
+
     const queryClient = useQueryClient()
 
 
     const confirmMutation = useMutation(() => confirmOrder(orderId), {
         onSuccess(data) {
             toast.success("Xác nhận đơn hàng")
+            queryClient.invalidateQueries('orderDetail')
         },
         onError(error) {
             alert('error')
@@ -190,7 +192,7 @@ const OrderAdminDetail = () => {
                     {data?.status !== "CANCEL" && (
                         <div className='flex space-x-2'>
                             {data?.status === 'WAITING' && data?.paymentType === "COD" && <BaseButton title='Confirm' handleClick={() => handleConfirm(orderId)} className='px-6 py-2 rounded-lg text-white bg-slate-600 mt-8' />}
-                            {(data?.status === 'CONFIRM' || data?.status === 'PAID') && <BaseButton title='Delivering' handleClick={() => handleDelivering(orderId)} className='px-6 py-2 rounded-lg text-white bg-slate-600 mt-8' />}
+                            {data?.status === 'PACKING' && <BaseButton title='Delivering' handleClick={() => handleDelivering(orderId)} className='px-6 py-2 rounded-lg text-white bg-slate-600 mt-8' />}
                             {(data?.status === 'CONFIRM' || data?.status === 'PAID') && <BaseButton title='Print Order' handleClick={() => handlePrintOrder(orderId)} className='px-6 py-2 rounded-lg text-white bg-slate-600 mt-8' />}
                             {data?.status === 'DELIVERING' && <BaseButton title='Delivered' handleClick={() => handleDelivered(orderId)} className='px-6 py-2 rounded-lg text-white bg-slate-600 mt-8' />}
                             {data?.status === 'RETURN' && <BaseButton title='Accept Return' handleClick={() => handleAcceptReturn(orderId)} className='px-6 py-2 rounded-lg text-white bg-slate-600 mt-8' />}

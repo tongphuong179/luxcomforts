@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import BaseButton from '../../components/button/BaseButton'
 import TextInput from '../../components/input/TextInput'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import { RegisterUser } from './services/Register'
 import toast, { Toaster } from 'react-hot-toast'
@@ -12,6 +12,7 @@ import SelectAddress from '../cart/SelectAddress'
 
 
 const RegisterScreen = () => {
+    const navigate = useNavigate()
     const { register, reset, handleSubmit, watch, formState: { errors } } = useForm()
     const [selectedAddress, setSelectedAddress] = useState({});
 
@@ -19,6 +20,7 @@ const RegisterScreen = () => {
     const mutation = useMutation(RegisterUser, {
         onSuccess(data) {
             toast.success("Bạn đã đăng ký tài khoản thành công")
+            navigate('/login')
             reset('')
             console.log(data)
         },

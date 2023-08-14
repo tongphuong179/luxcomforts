@@ -88,13 +88,13 @@ const CartScreen = () => {
   })
 
   const orderMutation = useMutation(order, {
-    onSuccess(data) {
+    async onSuccess(data) {
       if (data.message) {
-        window.open(data.message, '_blank')
+        window.open(data.message, '_blank');
       } else {
-        toast.success("Bạn đã đặt hàng thành công")
+        await dispatch(removeCart())
+        toast.success('Bạn đã đặt hàng thành công')
       }
-      dispatch(removeCart())
     },
     onError(err) {
       toast.error('Đã có lỗi xảy ra')
@@ -239,6 +239,10 @@ const CartScreen = () => {
   if (carts.length === 0) {
     content = (
       <div>
+        <Toaster
+          position="top-center"
+          reverseOrder={false}
+        />
         <div className='flex pt-10 justify-center space-x-4'>
           <p className='text-3xl'>SHOPPING CART</p>
           <span className='text-3xl text-gray-400'>&gt;</span>
@@ -257,13 +261,14 @@ const CartScreen = () => {
         {checkoutMutation.isLoading && (
           <Loading />
         )}
-        <div>
-          <Toaster
-            position="top-center"
-            reverseOrder={false}
-          />
-        </div>
+
         <div className='flex pt-10 justify-center space-x-4'>
+          <div>
+            <Toaster
+              position="top-center"
+              reverseOrder={false}
+            />
+          </div>
           <p className='text-3xl'>SHOPPING CART</p>
           <span className='text-3xl text-gray-400'>&gt;</span>
           <p className='text-3xl text-gray-400'>CHECKOUT DETAILS</p>
