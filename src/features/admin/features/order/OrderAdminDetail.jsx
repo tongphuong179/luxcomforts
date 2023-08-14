@@ -77,7 +77,7 @@ const OrderAdminDetail = () => {
     const handlePrintOrder = async (orderId) => {
         try {
             const printData = await printOrder(orderId)
-            console.log(printData)
+            window.open(printData, '_blank')
         } catch (error) {
             console.error("Đã xảy ra lỗi khi in đơn hàng", error);
             // Xử lý lỗi nếu cần
