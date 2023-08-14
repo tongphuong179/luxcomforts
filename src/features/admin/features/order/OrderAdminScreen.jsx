@@ -141,7 +141,7 @@ const OrderAdminScreen = () => {
                                                 {(order?.status === 'WAITING' && order?.paymentType === 'COD') && <BaseButton title='Confirm' handleClick={() => handleConfirm(order.id)} className='px-6 py-2 rounded-lg text-white bg-slate-600 ' />}
                                                 {(order?.status === 'CONFIRM' || order?.status === 'PAID') && <BaseButton title='Print order' handleClick={() => handlePrintOrder(order.id)} className='px-6 py-2 rounded-lg text-white bg-slate-600 ' />}
                                                 {order?.status === 'PACKING' && order?.paymentType === 'COD' && < BaseButton title='Delivering' handleClick={() => handleDelivering(order.id)} className='px-6 py-2 rounded-lg text-white bg-slate-600 ' />}
-                                                {order?.status === 'DELIVERING' && <BaseButton title='Delivered' handleClick={() => handleDelivered(order.id)} className='px-6 py-2 rounded-lg text-white bg-slate-600' />}
+                                                {order?.status === 'DELIVERING' && order?.deliveryType === 'SHOP' && <BaseButton title='Delivered' handleClick={() => handleDelivered(order.id)} className='px-6 py-2 rounded-lg text-white bg-slate-600' />}
                                                 {order?.status === 'RETURN' && <BaseButton title='Accept Return' handleClick={() => handleAcceptReturn(order.id)} className='px-6 py-2 rounded-lg text-white bg-slate-600' />}
                                             </div>
                                         )}

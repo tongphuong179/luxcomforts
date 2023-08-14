@@ -14,7 +14,7 @@ export const updateRoleUser = async (roleData) => {
   console.log(token);
   setAccessToken(token);
   try {
-    const res = await axiosInstance.post("/users/role/addtouser", roleData);
+    const res = await axiosInstance.post("/users/role/addToUser", roleData);
     return res.data;
   } catch (error) {
     throw new Error(error.response.data);
