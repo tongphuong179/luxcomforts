@@ -154,6 +154,9 @@ const CartScreen = () => {
   const handleOrder = (data) => {
     const dataCheckoutOrder = {
       ...dataCheckout,
+      deliveryAddress: {
+        id: selectedAddress ? selectedAddress.value : userAddress[0]?.value// Sử dụng địa chỉ mới nhất hoặc null nếu chưa có địa chỉ mới
+      },
       paymentType: data.selectedPays,
       deliveryType: data.selectedShipping,
       voucherCode: data.voucher,
