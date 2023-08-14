@@ -17,6 +17,7 @@ const OrderScreen = () => {
     const userId = currentUser.id
 
     const { data, isError } = useQuery(['order', userId], () => getOrderByUser(userId))
+    console.log(data)
 
     if (isError) {
         return (
@@ -31,10 +32,7 @@ const OrderScreen = () => {
                     <tr key="">
                         <th className=" bg-slate-700 text-white py-6 px-4 text-lg font-semibold">STT</th>
                         <th className=" bg-slate-700 text-white py-6 px-4 text-lg font-semibold">Sản phẩm</th>
-                        <th className=" bg-slate-700 text-white py-6 px-4 text-lg font-semibold">Địa chỉ</th>
-                        <th className=" bg-slate-700 text-white py-6 px-4 text-lg font-semibold">Giá trị đơn hàng</th>
-                        <th className=" bg-slate-700 text-white py-6 px-4 text-lg font-semibold">Phí vận chuyển</th>
-                        <th className=" bg-slate-700 text-white py-6 px-4 text-lg font-semibold">Khuyến mãi</th>
+                        <th className=" bg-slate-700 text-white py-6 px-4 text-lg font-semibold">Mã giao hàng nhanh</th>
                         <th className=" bg-slate-700 text-white py-6 px-4 text-lg font-semibold">Số tiền phải thanh toán</th>
                         <th className=" bg-slate-700 text-white py-6 px-4 text-lg font-semibold">Trạng thái</th>
                         <th className=" bg-slate-700 text-white py-6 px-4 text-lg font-semibold w-[180px]"></th>
@@ -48,7 +46,7 @@ const OrderScreen = () => {
                                 <td className="border-b border-slate-700 py-10 px-4 text-center">
                                     {order.orderItems.map(item => {
                                         return (
-                                            <div key={item.id} className='flex items-center space-x-4'>
+                                            <div key={item.id} className='flex justify-center items-center space-x-4'>
                                                 <img className='w-[80px]' src={item.product.mainImage} alt="" />
                                                 <div className='text-left space-y-2'>
                                                     <p><span className='font-semibold'>Sản phẩm</span>: {item.product.name}</p>
@@ -65,17 +63,7 @@ const OrderScreen = () => {
                                     })}
                                 </td>
                                 <td className="border-b border-slate-700 py-10 px-4 text-center">
-                                    {order.deliveryAddress.address},{order.deliveryAddress.ward},{order.deliveryAddress.district} ,{order.deliveryAddress.province}
-                                </td>
-
-                                <td className="border-b border-slate-700 py-10 px-4 text-center">
-                                    {order.amount}
-                                </td>
-                                <td className="border-b border-slate-700 py-10 px-4 text-center">
-                                    {order.deliveryFee}
-                                </td>
-                                <td className="border-b border-slate-700 py-10 px-4 text-center">
-                                    {order.total}
+                                    {order.ghnCode}
                                 </td>
                                 <td className="border-b border-slate-700 py-10 px-4 text-center">
                                     {order.total}

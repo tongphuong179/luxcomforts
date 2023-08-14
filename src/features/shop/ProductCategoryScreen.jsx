@@ -12,7 +12,7 @@ const ProductCategoryScreen = () => {
     const { data } = useQuery({ queryKey: ['products', categoryId], queryFn: () => getProductByCategory(categoryId) })
     console.log(data);
     return (
-        <div className='px-[360px]'>
+        <div className='px-[360px] pb-10'>
             <div className='pt-10 flex items-center justify-between'>
                 <div className='flex text-xl space-x-4 '>
                     <p className='text-gray-500'>HOME</p>

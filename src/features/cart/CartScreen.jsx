@@ -19,6 +19,7 @@ import ControllerSelect from '../../components/select/ControllerSelect'
 import { formatCurrency } from '../../services/formatCurrency'
 import { openModal } from '../../components/modal/state/ModalSlice'
 import ModalAddress from './ModalAddress';
+import { Toaster, toast } from 'react-hot-toast'
 
 
 
@@ -79,7 +80,7 @@ const CartScreen = () => {
       setSelectedDataCheckout(data)
     },
     onError(err) {
-      alert(err)
+      toast.error(`${err}`)
       reset({
         voucher: ''
       })
@@ -91,13 +92,12 @@ const CartScreen = () => {
       if (data.message) {
         window.open(data.message, '_blank')
       } else {
-        alert("Bạn đã đặt hàng thành công ")
+        toast.success("Bạn đã đặt hàng thành công")
       }
-
       dispatch(removeCart())
     },
     onError(err) {
-
+      toast.error('Đã có lỗi xảy ra')
     }
 
   })
@@ -162,22 +162,7 @@ const CartScreen = () => {
     orderMutation.mutate(dataCheckoutOrder)
   }
 
-  if (carts.length === 0) {
-    return (
-      <div>
-        <div className='flex pt-10 justify-center space-x-4'>
-          <p className='text-3xl'>SHOPPING CART</p>
-          <span className='text-3xl text-gray-400'>&gt;</span>
-          <p className='text-3xl text-gray-400'>CHECKOUT DETAILS</p>
-          <span className='text-3xl text-gray-400'>&gt;</span>
-          <p className='text-3xl text-gray-400'>ORDER COMPLETE</p>
-        </div>
-        <div className='text-2xl font-semibold py-[200px] text-center'>
-          Cart is Empty
-        </div>
-      </div>
-    )
-  }
+
 
   const previousCartsRef = useRef(carts); // Lưu trạng thái trước của carts bằng useRef
 
@@ -249,170 +234,197 @@ const CartScreen = () => {
     return total + (cart.quantity * cart.price_discount)
   }, 0)
 
-  return (
-    <div className='px-[80px] 2xl:px-[200px] pb-[100px]'>
-      {checkoutMutation.isLoading && (
-        <Loading />
-      )}
-      <div className='flex pt-10 justify-center space-x-4'>
-        <p className='text-3xl'>SHOPPING CART</p>
-        <span className='text-3xl text-gray-400'>&gt;</span>
-        <p className='text-3xl text-gray-400'>CHECKOUT DETAILS</p>
-        <span className='text-3xl text-gray-400'>&gt;</span>
-        <p className='text-3xl text-gray-400'>ORDER COMPLETE</p>
+  let content;
+
+  if (carts.length === 0) {
+    content = (
+      <div>
+        <div className='flex pt-10 justify-center space-x-4'>
+          <p className='text-3xl'>SHOPPING CART</p>
+          <span className='text-3xl text-gray-400'>&gt;</span>
+          <p className='text-3xl text-gray-400'>CHECKOUT DETAILS</p>
+          <span className='text-3xl text-gray-400'>&gt;</span>
+          <p className='text-3xl text-gray-400'>ORDER COMPLETE</p>
+        </div>
+        <div className='text-2xl font-semibold py-[200px] text-center'>
+          Cart is Empty
+        </div>
       </div>
-      <div className='grid grid-cols-2 gap-4'>
-        <div className='mt-[50px]'>
-          <table className='border-b-2 '>
-            <thead className='border-b-4'>
-              <tr className=''>
-                <th align='left' className='text-xl font-normal text-gray-700 w-[50px]'></th>
-                <th align='left' className='text-xl font-normal text-gray-700 w-[400px]'>Product</th>
-                <th align='left' className='text-xl font-normal text-gray-700 w-[120px]'>Price</th>
-                <th align='left' className='text-xl font-normal text-gray-700 w-[120px]'>Quantity</th>
-                <th align='right' className='text-xl font-normal text-gray-700 w-[120px]'>Subtotal</th>
-              </tr>
-            </thead>
-            <tbody className=''>
-              {carts.map(product => {
-                return (
-                  <tr key={product.id} className=''>
-                    <td>
-                      <div onClick={() => handleDelete(product.id)}>
-                        <TiDeleteOutline size={32} className='cursor-pointer hover:bg-slate-200' />
-                      </div>
-                    </td>
-                    <td className='py-6'>
-                      <div className='flex items-center'>
-                        <div>
-                          <img width={70} src={product.mainImage} alt="" />
+    )
+  } else {
+    content = (
+      <div className='px-[80px] 2xl:px-[200px] pb-[100px]'>
+        {checkoutMutation.isLoading && (
+          <Loading />
+        )}
+        <div>
+          <Toaster
+            position="top-center"
+            reverseOrder={false}
+          />
+        </div>
+        <div className='flex pt-10 justify-center space-x-4'>
+          <p className='text-3xl'>SHOPPING CART</p>
+          <span className='text-3xl text-gray-400'>&gt;</span>
+          <p className='text-3xl text-gray-400'>CHECKOUT DETAILS</p>
+          <span className='text-3xl text-gray-400'>&gt;</span>
+          <p className='text-3xl text-gray-400'>ORDER COMPLETE</p>
+        </div>
+        <div className='grid grid-cols-2 gap-4'>
+          <div className='mt-[50px]'>
+            <table className='border-b-2 '>
+              <thead className='border-b-4'>
+                <tr className=''>
+                  <th align='left' className='text-xl font-normal text-gray-700 w-[50px]'></th>
+                  <th align='left' className='text-xl font-normal text-gray-700 w-[400px]'>Product</th>
+                  <th align='left' className='text-xl font-normal text-gray-700 w-[120px]'>Price</th>
+                  <th align='left' className='text-xl font-normal text-gray-700 w-[120px]'>Quantity</th>
+                  <th align='right' className='text-xl font-normal text-gray-700 w-[120px]'>Subtotal</th>
+                </tr>
+              </thead>
+              <tbody className=''>
+                {carts.map(product => {
+                  return (
+                    <tr key={product.id} className=''>
+                      <td>
+                        <div onClick={() => handleDelete(product.id)}>
+                          <TiDeleteOutline size={32} className='cursor-pointer hover:bg-slate-200' />
                         </div>
-                        <div className='pl-4 space-y-2' >
-                          <p className='text-gray-500'>{product.name}</p>
+                      </td>
+                      <td className='py-6'>
+                        <div className='flex items-center'>
+                          <div>
+                            <img width={70} src={product.mainImage} alt="" />
+                          </div>
+                          <div className='pl-4 space-y-2' >
+                            <p className='text-gray-500'>{product.name}</p>
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                    <td>
-                      <p>{formatCurrency(product.price_discount)}</p>
-                    </td>
-                    <td>
-                      <div className='flex'>
-                        <button className='py-2 px-2 border-[1px]' onClick={() => handleSubtract(product.id)}>-</button>
-                        <p className='py-2 px-3 border-[1px]'>{product.quantity}</p>
-                        <button className='py-2 px-2 border-[1px]' onClick={() => handleAdd(product.id)}>+</button>
-                      </div>
-                    </td>
-                    <td align='right'>{formatCurrency(product.quantity * product.price_discount)} </td>
-                  </tr>
-                )
-              })}
+                      </td>
+                      <td>
+                        <p>{formatCurrency(product.price_discount)}</p>
+                      </td>
+                      <td>
+                        <div className='flex'>
+                          <button className='py-2 px-2 border-[1px]' onClick={() => handleSubtract(product.id)}>-</button>
+                          <p className='py-2 px-3 border-[1px]'>{product.quantity}</p>
+                          <button className='py-2 px-2 border-[1px]' onClick={() => handleAdd(product.id)}>+</button>
+                        </div>
+                      </td>
+                      <td align='right'>{formatCurrency(product.quantity * product.price_discount)} </td>
+                    </tr>
+                  )
+                })}
 
-            </tbody>
-          </table>
-          <div className="flex space-x-5 pt-5">
-            <BaseButton handleClick={() => navigate('/shop')} title="CONTINUE SHOPPING" className='py-2 px-5 bg-white text-primary border-2 border-primary hover:bg-primary hover:text-white' />
-            <BaseButton title="REMOVE CART" className='py-2 px-4 text-white' handleClick={() => dispatch(removeCart())} />
-          </div>
-
-          <div>
-            <p className='text-xl font-medium pt-14'>Hình thức giao hàng</p>
-            <div className='pt-7'>
-              <ControllerRadioGroup
-                name="selectedShipping"
-                control={control}
-                options={shippings}
-                defaultValue="SHOP"
-                value={selectedAddress}
-                onChange={(ship) => {
-                  setSelectedShip(ship)
-                  handleSelectShip(ship)
-                }}
-              />
+              </tbody>
+            </table>
+            <div className="flex space-x-5 pt-5">
+              <BaseButton handleClick={() => navigate('/shop')} title="CONTINUE SHOPPING" className='py-2 px-5 bg-white text-primary border-2 border-primary hover:bg-primary hover:text-white' />
+              <BaseButton title="REMOVE CART" className='py-2 px-4 text-white' handleClick={() => dispatch(removeCart())} />
             </div>
-          </div>
-          <div className='pt-10'>
-            <p className='text-xl font-medium'>Địa chỉ giao hàng</p>
-            {userAddress &&
-              <div className='pt-10'>
-                <ControllerSelect
-                  name='address'
-                  control={control}
-                  options={userAddress}
-                  defaultValue={userAddress[0]}
-                  onChange={(address) => {
-                    setSelectedAddress(address); // Cập nhật giá trị địa chỉ mới khi người dùng thay đổi
-                    handleSelectAddress(address);
 
+            <div>
+              <p className='text-xl font-medium pt-14'>Hình thức giao hàng</p>
+              <div className='pt-7'>
+                <ControllerRadioGroup
+                  name="selectedShipping"
+                  control={control}
+                  options={shippings}
+                  defaultValue="SHOP"
+                  value={selectedAddress}
+                  onChange={(ship) => {
+                    setSelectedShip(ship)
+                    handleSelectShip(ship)
                   }}
                 />
               </div>
-            }
-            <BaseButton handleClick={() => dispatch(openModal())} title="Thêm địa chỉ giao hàng " className='px-4 py-2 rounded-lg text-white mt-10' />
-          </div>
-        </div>
+            </div>
+            <div className='pt-10'>
+              <p className='text-xl font-medium'>Địa chỉ giao hàng</p>
+              {userAddress &&
+                <div className='pt-10'>
+                  <ControllerSelect
+                    name='address'
+                    control={control}
+                    options={userAddress}
+                    defaultValue={userAddress[0]}
+                    onChange={(address) => {
+                      setSelectedAddress(address); // Cập nhật giá trị địa chỉ mới khi người dùng thay đổi
+                      handleSelectAddress(address);
 
-        <div className='mt-[50px] pl-4 border-l-2'>
-          <p className='text-xl w-full border-b-4 pb-[2px]'>Cart ToTals</p>
-          <div className='py-8'>
-            <div className='flex items-center space-x-2 w-full border-b-4 pb-2'>
-              <AiFillTag />
-              <p className='text-gray-600'>Mã giảm giá</p>
+                    }}
+                  />
+                </div>
+              }
+              <BaseButton handleClick={() => dispatch(openModal())} title="Thêm địa chỉ giao hàng " className='px-4 py-2 rounded-lg text-white mt-10' />
+            </div>
+          </div>
+
+          <div className='mt-[50px] pl-4 border-l-2'>
+            <p className='text-xl w-full border-b-4 pb-[2px]'>Cart ToTals</p>
+            <div className='py-8'>
+              <div className='flex items-center space-x-2 w-full border-b-4 pb-2'>
+                <AiFillTag />
+                <p className='text-gray-600'>Mã giảm giá</p>
+              </div>
+
+
+              <form onSubmit={handleSubmit(handleApply)}>
+                <TextInput placeholder="Nhập mã giảm giá" className='w-full mt-5' {...register('voucher')} />
+                <BaseButton title='Áp dụng' className='w-full py-3 mt-7 text-white' />
+              </form>
             </div>
 
 
-            <form onSubmit={handleSubmit(handleApply)}>
-              <TextInput placeholder="Nhập mã giảm giá" className='w-full mt-5' {...register('voucher')} />
-              <BaseButton title='Áp dụng' className='w-full py-3 mt-7 text-white' />
+            <div className='pt-8 space-y-6'>
+              <div className='flex justify-between  border-b-2'>
+                <p>Giá trị đơn hàng</p>
+                <p>{formatCurrency(totals)}</p>
+              </div>
+              <div className='flex justify-between  border-b-2'>
+                <p>Phí vận chuyển</p>
+                <p>{selectedDataCheckout ? formatCurrency(selectedDataCheckout.deliveryFee) : 0}</p>
+              </div>
+              <div className='flex justify-between  border-b-2'>
+                <p>Khuyến mãi</p>
+                <p>-{formatCurrency(selectedDataCheckout.voucher_discount)}</p>
+              </div>
+              <div className='flex justify-between  border-b-2'>
+                <p>Số tiền bạn cần thanh toán</p>
+                <p>{selectedDataCheckout ? formatCurrency(selectedDataCheckout.total) : totals}</p>
+              </div>
+            </div>
+
+            <p className=' text-xl font-medium pt-14'>Hình thức thanh toán</p>
+
+
+            <form onSubmit={handleSubmit(handleOrder)} className='py-5 items-center'>
+              <ControllerRadioGroup
+                name="selectedPays"
+                control={control}
+                defaultValue="ONLINE"
+                options={pays}
+                onChange={(newValue) => {
+                  console.log('Selected pay:', newValue);
+                }}
+              />
+              {/* <ControllerRadio name="selectedPay" control={control} options={pays} /> */}
+              <div className="text-center">
+                <BaseButton title='Tiến hành đặt hàng' className='px-32 py-4 text-white font-medium rounded-xl mt-20 w-full' />
+              </div>
             </form>
           </div>
+          <ModalAddress />
 
-
-          <div className='pt-8 space-y-6'>
-            <div className='flex justify-between  border-b-2'>
-              <p>Giá trị đơn hàng</p>
-              <p>{formatCurrency(totals)}</p>
-            </div>
-            <div className='flex justify-between  border-b-2'>
-              <p>Phí vận chuyển</p>
-              <p>{selectedDataCheckout ? formatCurrency(selectedDataCheckout.deliveryFee) : 0}</p>
-            </div>
-            <div className='flex justify-between  border-b-2'>
-              <p>Khuyến mãi</p>
-              <p>-{formatCurrency(selectedDataCheckout.voucher_discount)}</p>
-            </div>
-            <div className='flex justify-between  border-b-2'>
-              <p>Số tiền bạn cần thanh toán</p>
-              <p>{selectedDataCheckout ? formatCurrency(selectedDataCheckout.total) : totals}</p>
-            </div>
-          </div>
-
-          <p className=' text-xl font-medium pt-14'>Hình thức thanh toán</p>
-
-
-          <form onSubmit={handleSubmit(handleOrder)} className='py-5 items-center'>
-            <ControllerRadioGroup
-              name="selectedPays"
-              control={control}
-              defaultValue="ONLINE"
-              options={pays}
-              onChange={(newValue) => {
-                console.log('Selected pay:', newValue);
-              }}
-            />
-            {/* <ControllerRadio name="selectedPay" control={control} options={pays} /> */}
-            <div className="text-center">
-              <BaseButton title='Tiến hành đặt hàng' className='px-32 py-4 text-white font-medium rounded-xl mt-20 w-full' />
-            </div>
-          </form>
         </div>
-        <ModalAddress />
+
+
 
       </div>
+    )
+  }
 
-
-
-    </div>
-  )
+  return content
 
 }
 

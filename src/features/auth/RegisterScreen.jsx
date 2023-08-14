@@ -23,7 +23,7 @@ const RegisterScreen = () => {
             console.log(data)
         },
         onError() {
-            console.log("đăng ký thất bại")
+            toast.error("Đăng ký tài khoản thất bại")
         }
     })
 

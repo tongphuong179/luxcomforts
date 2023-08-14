@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import React from 'react'
 import { useParams } from 'react-router-dom'
 import { getOrderById } from './services/GetOrderById'
@@ -9,10 +9,12 @@ import { cancelOrder } from './services/CancelOrder';
 import { finishOrder } from './services/FinishOrder';
 import { returnOrder } from './services/ReturnOrder';
 import { repaymentOrder } from './services/RepaymentOrder';
+import { Toaster, toast } from 'react-hot-toast';
 
 const OrderDetail = () => {
 
     const { orderId } = useParams()
+    const queryClient = useQueryClient()
     console.log(orderId)
     const { data, isError, isSuccess } = useQuery({ queryKey: ['orderDetail', orderId], queryFn: () => getOrderById(orderId) })
     console.log(data)
@@ -24,7 +26,8 @@ const OrderDetail = () => {
 
     const cancelMutation = useMutation(() => cancelOrder(orderId), {
         onSuccess(data) {
-            alert("Bạn đã hủy đơn hàng")
+            toast.success("Bạn đã hủy đơn hàng thành công")
+            queryClient.invalidateQueries('orderDetail')
         }
     })
     const repaymentMutation = useMutation(() => repaymentOrder(orderId), {
@@ -32,28 +35,35 @@ const OrderDetail = () => {
             if (data.message) {
                 window.open(data.message, '_blank')
             } else {
-                alert("123")
+                console.log(data)
             }
         },
         onError(err) {
-
+            toast.error("Đã có lỗi xảy ra")
         }
 
     })
     const finishMutation = useMutation(() => finishOrder(orderId), {
         onSuccess(data) {
-            alert("Bạn đã xác nhận đơn hàng được giao đến nơi")
+            toast.success("Bạn đã xác nhận đơn hàng được giao đến bạn")
+            queryClient.invalidateQueries('orderDetail')
+        },
+        onError(err) {
+            toast.error("Đã có lỗi xảy ra")
         }
     })
     const returnMutation = useMutation(() => returnOrder(orderId), {
         onSuccess(data) {
-            alert("Bạn đã trả lại đơn hàng")
+            toast.success("Bạn đã yêu cầu trả lại đơn hàng")
+            queryClient.invalidateQueries('orderDetail')
+        },
+        onError(err) {
+            toast.error("Đã có lỗi xảy ra")
         }
     })
 
     const handleCancel = () => {
         cancelMutation.mutate()
-
     }
     const handleRepayment = () => {
         repaymentMutation.mutate()
@@ -67,8 +77,15 @@ const OrderDetail = () => {
 
     return (
         <div className='px-[380px] py-20' >
+            <div>
+                <Toaster
+                    position="top-center"
+                    reverseOrder={false}
+                />
+            </div>
             <div >
                 <p className='text-3xl font-semibold'>Đơn hàng</p>
+
 
                 <div className='grid grid-cols-2 gap-4'>
                     {data && data?.orderItems.map(product => {
@@ -159,10 +176,10 @@ const OrderDetail = () => {
                     <p className='text-3xl font-semibold'>Thao tác</p>
                     {data?.status !== "CANCELLED" && (
                         <div className='flex space-x-2'>
-                            {data?.status !== "FINISH" && data?.status !== "DELIVERED" && data?.status !== "FINISH" && data?.status !== "RETURN" && < BaseButton title='Cancel' handleClick={() => handleCancel(orderId)} className='px-6 py-2 rounded-lg text-white bg-slate-600 mt-8' />}
+                            {(data?.status === "WAITING" || data?.status === "DELIVERING" || data?.status === "PAID") && < BaseButton title='Cancel' handleClick={() => handleCancel(orderId)} className='px-6 py-2 rounded-lg text-white bg-slate-600 mt-8' />}
                             {data?.status === 'WAITING' && data?.paymentType === 'ONLINE' && <BaseButton title='Thanh toán' handleClick={() => handleRepayment(orderId)} className='px-6 py-2 rounded-lg text-white bg-slate-600 mt-8' />}
                             {data?.status === 'DELIVERED' && <BaseButton title='Finish' handleClick={() => handleFinish(orderId)} className='px-6 py-2 rounded-lg text-white bg-slate-600 mt-8' />}
-                            {data?.status === 'FINISHED' && <BaseButton title='Return' handleClick={() => handleReturn(orderId)} className='px-6 py-2 rounded-lg text-white bg-slate-600 mt-8' />}
+                            {data?.status === 'DELIVERED' && <BaseButton title='Return' handleClick={() => handleReturn(orderId)} className='px-6 py-2 rounded-lg text-white bg-slate-600 mt-8' />}
                         </div>
                     )}
                 </div>

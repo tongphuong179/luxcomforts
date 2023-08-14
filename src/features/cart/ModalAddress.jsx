@@ -43,8 +43,8 @@ const ModalAddress = () => {
 
     return (
         <div>
-            <ModalBase className='w-[700px]'>
-                <p className='text-center pt-3 pb-10 text-2xl font-medium'>Thêm địa chỉ</p>
+            <ModalBase className='w-[700px] h-[600px]'>
+                <p className='text-center pt-3 pb-12 text-2xl font-medium'>Thêm địa chỉ</p>
                 <form className='' onSubmit={handleSubmit(onSubmit)}>
                     <div className=' flex space-x-8 '>
                         <SelectAddress onSelectAddress={setSelectedAddress} />
@@ -61,7 +61,7 @@ const ModalAddress = () => {
 
 
                     </div>
-                    <div className='text-right pt-10 space-x-6'>
+                    <div className='text-right pt-[150px] space-x-6'>
                         <BaseButton handleClick={() => dispatch(closeModal())} type="button" title="Hủy" className='text-white px-4 py-1 rounded-lg' />
                         <BaseButton type="submit" title="Thêm địa chỉ" className='text-white px-4 py-1 rounded-lg' />
                     </div>

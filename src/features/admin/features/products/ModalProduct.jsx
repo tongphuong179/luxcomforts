@@ -15,41 +15,34 @@ import { twMerge } from 'tailwind-merge';
 import { createProduct } from './services/CreateProduct';
 import Loading from '../../../../components/loading/Loading';
 import { updateProduct } from './services/UpdateProduct';
+import { Toaster, toast } from 'react-hot-toast';
 
 
 const ModalProduct = () => {
     const queryClient = useQueryClient()
     const dispatch = useDispatch()
     const infoModal = useSelector(state => state.modal.modalInfo)
-
-
-
-    const [isUpdating, setIsUpdating] = useState(false);
-
     const { data } = useQuery({ queryKey: ['categories'], queryFn: getAllCategory, enabled: !infoModal, })
+    const [selectedImage, setSelectedImage] = useState('')
+    const [selectedExtraImages, setSelectedExtraImages] = useState([]);
 
 
 
     const mutation = useMutation(createProduct, {
         onSuccess(data) {
-            console.log(data)
+            toast.success("Bạn đã thêm sản phẩm thành công")
             queryClient.invalidateQueries('products')
             dispatch(closeModal())
             reset()
         },
         onError(error) {
-            console.log('thêm thất bại')
+            toast.error("Có lỗi xảy ra khi thêm sản phẩm")
         },
 
     })
 
 
-
-
-
-
     const { register, handleSubmit, watch, control, reset, setValue } = useForm()
-
 
     useEffect(() => {
         console.log(infoModal)
@@ -61,24 +54,66 @@ const ModalProduct = () => {
             setValue('category', infoModal.category);
             setValue('weight', infoModal.weight);
             setValue('deliveryAvailable', infoModal.deliveryAvailable ? 'true' : 'false');
+            // Cập nhật giá trị của ảnh chính
+            if (infoModal.mainImage) {
+                setValue('imageFile', ''); // Đặt giá trị trống để không hiển thị ảnh chính trong input
+                setSelectedImage(infoModal.mainImage);
+            }
+
+            setSelectedExtraImages(infoModal.images)
         }
     }, [infoModal, setValue]);
+    console.log(selectedImage)
+    console.log(selectedExtraImages)
 
     const updateMutation = useMutation((updateData) => updateProduct(infoModal.id, updateData), {
         onSuccess(data) {
+            toast.success("Bạn đã sửa sản phẩm thành công")
             queryClient.invalidateQueries('products')
             dispatch(closeModal())
 
         },
         onError(error) {
-            console.log(error)
+            toast.error("Đã xảy ra lỗi trong quá trình sửa sản phẩm")
         },
 
     })
 
+    const updateExtraImagesInput = async () => {
+        const newExtraImageFilesPromises = selectedExtraImages.map(async imageUrl => {
+            const blob = await (await fetch(imageUrl)).blob();
+            return new File([blob], 'extraImage.png'); // Tạo một File tạm thời từ Blob
+        });
+
+        // Đợi cho tất cả các promises được giải quyết
+        const newExtraImageFiles = await Promise.all(newExtraImageFilesPromises);
+
+        // Tạo một mảng mới chứa giá trị mới
+        const newExtraImagesArray = [...newExtraImageFiles];
+
+        // Cập nhật giá trị của trường extraImages
+        setValue('extraImages', newExtraImagesArray);
+    };
+
+    const removeExtraImage = async (index) => {
+        const newImages = selectedExtraImages.filter((_, i) => i !== index);
+        setSelectedExtraImages(newImages);
+
+        // Xóa hình ảnh khỏi mảng imageFile trong data
+        const newImageFiles = getValues('imageFile').filter((_, i) => i !== index);
+        setValue('imageFile', newImageFiles);
+
+        // Đợi cho tất cả các promises được giải quyết
+        const newExtraImageFiles = await Promise.all(newImages.map(async (imageUrl) => {
+            const blob = await (await fetch(imageUrl)).blob();
+            return new File([blob], 'extraImage.png');
+        }));
+
+        // Cập nhật giá trị của trường extraImages trong input
+        setValue('extraImages', newExtraImageFiles);
+    };
+
     const onSubmit = async (data) => {
-
-
         const formData = new FormData();
         formData.append('name', data.name);
         formData.append('inventory', data.inventory);
@@ -87,20 +122,20 @@ const ModalProduct = () => {
         formData.append('category', data.category.id);
         formData.append('weight', data.weight);
         formData.append('deliveryAvailable', data.deliveryAvailable === 'true');
-        if(data.imageFile.length>0){
+        if (data.imageFile.length > 0) {
             formData.append('imageFile', data.imageFile[0]); // Assuming you want to upload only one image
-        }else{
-            const file = new File([],"");
+        } else {
+            const file = new File([], "");
             formData.append('imageFile', file);
         }
-        
-        if(data.extraImages.length>0){
+
+        if (data.extraImages.length > 0) {
             for (let i = 0; i < data.extraImages.length; i++) {
                 formData.append('extraImages', data.extraImages[i]);
             }
-        }else{
-            const file = new File([],"");
-            formData.append('extraImages',file);
+        } else {
+            const file = new File([], "");
+            formData.append('extraImages', file);
         }
 
 
@@ -144,6 +179,12 @@ const ModalProduct = () => {
                     <Loading />
                 )}
                 <div>
+                    <div>
+                        <Toaster
+                            position="top-center"
+                            reverseOrder={false}
+                        />
+                    </div>
                     <p className='text-center font-bold text-xl '>{infoModal ? "Cập nhật sản phẩm" : "Thêm sản phẩm"}</p>
                     <form className='py-10' onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
                         <div className='grid grid-cols-2 gap-4 pl-9'>
@@ -184,7 +225,26 @@ const ModalProduct = () => {
                                 </div>
                                 <div className='space-y-2' >
                                     <p className=''> Ảnh sản phẩm</p>
-                                    <TextInput type='file' multiple className='py-2 px-4' {...register('imageFile')} />
+                                    <TextInput
+                                        type='file'
+                                        multiple
+                                        className='py-2 px-4'
+                                        {...register('imageFile')}
+                                        onChange={(e) => {
+                                            const file = e.target.files[0];
+                                            if (file) {
+                                                const imageUrl = URL.createObjectURL(file);
+                                                setSelectedImage(imageUrl);
+                                            }
+                                        }}
+                                    />
+                                    {selectedImage && (
+                                        <img
+                                            src={selectedImage}
+                                            alt='Selected Image'
+                                            className='mt-2 max-w-[200px] max-h-[200px]'
+                                        />
+                                    )}
                                 </div>
                                 <div className='space-y-2' >
                                     <p className=''> Tên sản phẩm</p>
@@ -223,7 +283,36 @@ const ModalProduct = () => {
                                 </div>
                                 <div className='space-y-2' >
                                     <p className=''> ExtraImages </p>
-                                    <TextInput type='file' multiple className='py-2 px-4' {...register('extraImages')} />
+                                    <TextInput
+                                        type='file'
+                                        multiple
+                                        className='py-2 px-4'
+                                        {...register('extraImages')}
+                                        onChange={(e) => {
+                                            const files = e.target.files;
+                                            if (files) {
+                                                const imageUrls = Array.from(files).map((file, index) => ({
+                                                    id: index + 1,
+                                                    imageUrl: URL.createObjectURL(file)
+                                                }))
+                                                setSelectedExtraImages(imageUrls);
+                                                console.log(selectedExtraImages)
+                                            }
+                                        }}
+                                    />
+                                    {selectedExtraImages.length > 0 && (
+                                        <div className='mt-2'>
+                                            {selectedExtraImages.map((imageUrl, index) => (
+                                                <img
+                                                    key={index}
+                                                    src={imageUrl.imageUrl}
+                                                    alt={`Extra Image ${index + 1}`}
+                                                    className='max-w-[200px] max-h-[200px] mr-2 mb-2'
+                                                />
+                                            ))}
+                                        </div>
+                                    )}
+
                                 </div>
                                 <div className='space-y-2' >
                                     <p className=''>Mô tả</p>

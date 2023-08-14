@@ -1,6 +1,6 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { getOrderById } from '../../../order/services/GetOrderById'
 import { formatCurrency } from '../../../../services/formatCurrency'
 import BaseButton from '../../../../components/button/BaseButton'
@@ -11,6 +11,8 @@ import { finishOrder } from '../../../order/services/FinishOrder'
 import { acceptReturnOrder } from './services/AcceptReturnOrder'
 import { deliveredOrder } from './services/DeliveredOrder'
 import Loading from '../../../../components/loading/Loading';
+import { printOrder } from './services/PrintOrder'
+import { Toaster, toast } from 'react-hot-toast'
 
 const OrderAdminDetail = () => {
     const { orderId } = useParams()
@@ -18,11 +20,12 @@ const OrderAdminDetail = () => {
     const { data, isError, isSuccess } = useQuery({ queryKey: ['orderDetail', orderId], queryFn: () => getOrderById(orderId) })
     console.log(data)
 
+    const queryClient = useQueryClient()
 
 
     const confirmMutation = useMutation(() => confirmOrder(orderId), {
         onSuccess(data) {
-            alert("Xác nhận đơn hàng")
+            toast.success("Xác nhận đơn hàng")
         },
         onError(error) {
             alert('error')
@@ -30,26 +33,37 @@ const OrderAdminDetail = () => {
     })
     const deliveringMutation = useMutation(() => deliveringOrder(orderId), {
         onSuccess(data) {
-            alert("Đơn hàng đang được vận chuyển")
+            toast.success("Đơn hàng đang được vận chuyển")
+            queryClient.invalidateQueries('orderDetail')
         },
         onError(error) {
             alert('error')
         }
     })
+    // const printMutation = useMutation(() => printOrder(orderId), {
+    //     onSuccess(data) {
+    //         console.log(data)
+    //     },
+    //     onError(error) {
+    //         toast.error("Đã xảy ra lỗi")
+    //     }
+    // })
     const deliveredMutation = useMutation(() => deliveredOrder(orderId), {
         onSuccess(data) {
-            alert("Đơn hàng đã được vận chuyển đến địa chỉ của bạn")
+            toast.success("Đơn hàng đã được vận chuyển đến địa chỉ của khách hàng")
+            queryClient.invalidateQueries('orderDetail')
         },
         onError(error) {
-            alert('error')
+            toast.error("Đã xảy ra lỗi")
         }
     })
     const acceptReturnMutation = useMutation(() => acceptReturnOrder(orderId), {
         onSuccess(data) {
-            alert("Đã hủy đơn hàng")
+            toast.success("Bạn đã xác nhận đơn yêu cầu được trả lại đơn hàng từ khách hàng")
+            queryClient.invalidateQueries('orderDetail')
         },
         onError(error) {
-            alert('error')
+            toast.error("Đã xảy ra lỗi")
         }
     })
 
@@ -60,18 +74,29 @@ const OrderAdminDetail = () => {
     const handleDelivering = () => {
         deliveringMutation.mutate()
     }
+    const handlePrintOrder = async (orderId) => {
+        try {
+            const printData = await printOrder(orderId)
+            console.log(printData)
+        } catch (error) {
+            console.error("Đã xảy ra lỗi khi in đơn hàng", error);
+            // Xử lý lỗi nếu cần
+        }
+    }
     const handleDelivered = () => {
         deliveredMutation.mutate()
     }
 
     const handleAcceptReturn = () => {
-
+        acceptReturnMutation.mutate()
     }
     return (
         <div className='px-[100px] py-20' >
             {deliveringMutation.isLoading && (
                 <Loading />
             )}
+            <div><Toaster position="top-center"
+                reverseOrder={false} /></div>
             <div >
                 <p className='text-3xl font-semibold'>Đơn hàng</p>
 
@@ -166,6 +191,7 @@ const OrderAdminDetail = () => {
                         <div className='flex space-x-2'>
                             {data?.status === 'WAITING' && data?.paymentType === "COD" && <BaseButton title='Confirm' handleClick={() => handleConfirm(orderId)} className='px-6 py-2 rounded-lg text-white bg-slate-600 mt-8' />}
                             {(data?.status === 'CONFIRM' || data?.status === 'PAID') && <BaseButton title='Delivering' handleClick={() => handleDelivering(orderId)} className='px-6 py-2 rounded-lg text-white bg-slate-600 mt-8' />}
+                            {(data?.status === 'CONFIRM' || data?.status === 'PAID') && <BaseButton title='Print Order' handleClick={() => handlePrintOrder(orderId)} className='px-6 py-2 rounded-lg text-white bg-slate-600 mt-8' />}
                             {data?.status === 'DELIVERING' && <BaseButton title='Delivered' handleClick={() => handleDelivered(orderId)} className='px-6 py-2 rounded-lg text-white bg-slate-600 mt-8' />}
                             {data?.status === 'RETURN' && <BaseButton title='Accept Return' handleClick={() => handleAcceptReturn(orderId)} className='px-6 py-2 rounded-lg text-white bg-slate-600 mt-8' />}
                         </div>

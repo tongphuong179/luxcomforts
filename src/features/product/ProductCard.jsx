@@ -21,9 +21,9 @@ const ProductCard = ({ product, discountPrice }) => { // Updated to accept `disc
                 <BaseButton title="QUICK VIEW" className='text-white px-[98px] py-2' />
             </div>
             <div>
-                <p className='text-sm text-gray-500 text-center'>{product.name}</p>
-                <p className="text-base font-light pt-1">{product.description}</p>
-                <div className='flex items-center space-x-2'>
+                <p className='pt-4 text-lg text-gray-700 text-center font-bold'>{product.name}</p>
+
+                <div className='flex pt-4 justify-center items-center space-x-2'>
 
                     {discountPrice ? ( // Render the discounted price if discountPrice is available
                         <>
@@ -35,10 +35,7 @@ const ProductCard = ({ product, discountPrice }) => { // Updated to accept `disc
                     )}
 
                 </div>
-                <p className='font-light text-gray-600'>or 4 payments of $23.51 with</p>
-                <button>
-                    {/* SVG button content */}
-                </button>
+
             </div>
         </div>
     );

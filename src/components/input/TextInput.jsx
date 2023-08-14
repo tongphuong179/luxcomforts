@@ -11,7 +11,9 @@ const TextInput = React.forwardRef(
             label,
             placeholder,
             spacing,
+            onChange,
             ...props
+
         },
         ref
     ) => {
@@ -22,6 +24,7 @@ const TextInput = React.forwardRef(
                     ref={ref}
                     type={type}
                     placeholder={placeholder}
+                    onChange={onChange}
                     className={twMerge('border border-gray-400 p-[9.5px] outline-none  rounded-md bg-gray-200  hover:border-neutral-600 focus:border-neutral-500 focus:bg-white', className)}
                     {...props}
                 />
