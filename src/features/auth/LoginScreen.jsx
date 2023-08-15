@@ -47,7 +47,7 @@ const LoginScreen = () => {
                 </div>
                 <div className='flex space-x-[80px] items-center'>
                     <label className='text-lg' htmlFor="">Password</label>
-                    <TextInput placeholder="password" {...register('password')} />
+                    <TextInput type="password" placeholder="password" {...register('password')} />
                 </div>
                 <div className='text-center pt-4'>
                     <p className=' font-medium cursor-pointer hover:opacity-80'>Forgot you password</p>

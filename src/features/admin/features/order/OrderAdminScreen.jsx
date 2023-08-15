@@ -64,7 +64,7 @@ const OrderAdminScreen = () => {
     const handlePrintOrder = async (orderId) => {
         try {
             const printData = await printOrder(orderId)
-            window.open(printData)
+            window.open(printData, '_blank')
         } catch (error) {
             console.error("Đã xảy ra lỗi khi in đơn hàng", error);
             // Xử lý lỗi nếu cần
@@ -139,8 +139,8 @@ const OrderAdminScreen = () => {
                                         {order?.status !== "CANCEL" && (
                                             <div className=' space-x-2'>
                                                 {(order?.status === 'WAITING' && order?.paymentType === 'COD') && <BaseButton title='Confirm' handleClick={() => handleConfirm(order.id)} className='px-6 py-2 rounded-lg text-white bg-slate-600 ' />}
-                                                {(order?.status === 'CONFIRM' || order?.status === 'PAID') && <BaseButton title='Print order' handleClick={() => handlePrintOrder(order.id)} className='px-6 py-2 rounded-lg text-white bg-slate-600 ' />}
-                                                {order?.status === 'PACKING' && order?.paymentType === 'COD' && < BaseButton title='Delivering' handleClick={() => handleDelivering(order.id)} className='px-6 py-2 rounded-lg text-white bg-slate-600 ' />}
+                                                {(order?.status === 'CONFIRM' || order?.status === 'PAID'|| order?.status === 'PACKING') && <BaseButton title='Print order' handleClick={() => handlePrintOrder(order.id)} className='px-6 py-2 rounded-lg text-white bg-slate-600 mt-8' />}
+                                                {order?.status === 'PACKING' && < BaseButton title='Delivering' handleClick={() => handleDelivering(order.id)} className='px-6 py-2 rounded-lg text-white bg-slate-600 mt-8' />}
                                                 {order?.status === 'DELIVERING' && order?.deliveryType === 'SHOP' && <BaseButton title='Delivered' handleClick={() => handleDelivered(order.id)} className='px-6 py-2 rounded-lg text-white bg-slate-600' />}
                                                 {order?.status === 'RETURN' && <BaseButton title='Accept Return' handleClick={() => handleAcceptReturn(order.id)} className='px-6 py-2 rounded-lg text-white bg-slate-600' />}
                                             </div>
