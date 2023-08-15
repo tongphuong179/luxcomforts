@@ -315,8 +315,8 @@ const CartScreen = () => {
                       <td>
                         <div className='flex'>
                           <button className='py-2 px-2 border-[1px]' onClick={() => handleSubtract(product.id)}>-</button>
-                          <p className='py-2 px-3 border-[1px]'>{product.quantity}</p>
-                          <button className='py-2 px-2 border-[1px]' onClick={() => handleAdd(product.id)}>+</button>
+                          <p  className='py-2 px-3 border-[1px]'>{product.quantity}</p>
+                          <button className='py-2 px-2 border-[1px]' onClick={() => {if (product.quantity < product.inventory) handleAdd(product.id)}}>+</button>
                         </div>
                       </td>
                       <td align='right'>{formatCurrency(product.quantity * product.price_discount)} </td>
