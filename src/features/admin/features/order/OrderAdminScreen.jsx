@@ -10,6 +10,7 @@ import { deliveredOrder } from './services/DeliveredOrder'
 import { Toaster, toast } from 'react-hot-toast'
 import { printOrder } from './services/PrintOrder'
 import Loading from '../../../../components/loading/Loading'
+import { formatCurrency } from '../../../../services/formatCurrency'
 
 
 
@@ -120,7 +121,7 @@ const OrderAdminScreen = () => {
                                                             <span className='font-semibold'>Số lương</span>: {item.quantity}
                                                         </p>
                                                         <p>
-                                                            <span className='font-semibold'>Đơn giá</span>: {item.product.price}
+                                                            <span className='font-semibold'>Đơn giá</span>: {formatCurrency(item.product.price)}
                                                         </p>
                                                     </div>
 

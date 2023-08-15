@@ -11,6 +11,7 @@ import { returnOrder } from './services/ReturnOrder';
 import { repaymentOrder } from './services/RepaymentOrder';
 import { Toaster, toast } from 'react-hot-toast';
 
+
 const OrderDetail = () => {
 
     const { orderId } = useParams()
@@ -176,7 +177,7 @@ const OrderDetail = () => {
                     <p className='text-3xl font-semibold'>Thao tác</p>
                     {data?.status !== "CANCELLED" && (
                         <div className='flex space-x-2'>
-                            {(data?.status === "WAITING" || data?.status === "DELIVERING" || data?.status === "PAID") && < BaseButton title='Cancel' handleClick={() => handleCancel(orderId)} className='px-6 py-2 rounded-lg text-white bg-slate-600 mt-8' />}
+                            {(data?.status === "WAITING" || data?.status === "CONFIRM" || data?.status === "PAID") && < BaseButton title='Cancel' handleClick={() => handleCancel(orderId)} className='px-6 py-2 rounded-lg text-white bg-slate-600 mt-8' />}
                             {data?.status === 'WAITING' && data?.paymentType === 'ONLINE' && <BaseButton title='Thanh toán' handleClick={() => handleRepayment(orderId)} className='px-6 py-2 rounded-lg text-white bg-slate-600 mt-8' />}
                             {data?.status === 'DELIVERED' && <BaseButton title='Finish' handleClick={() => handleFinish(orderId)} className='px-6 py-2 rounded-lg text-white bg-slate-600 mt-8' />}
                             {data?.status === 'DELIVERED' && <BaseButton title='Return' handleClick={() => handleReturn(orderId)} className='px-6 py-2 rounded-lg text-white bg-slate-600 mt-8' />}

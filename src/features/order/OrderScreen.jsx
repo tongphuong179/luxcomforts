@@ -8,6 +8,8 @@ import ModalOrder from './ModalOrder'
 import { openModal } from '../../components/modal/state/ModalSlice'
 import { order } from '../cart/services/Order';
 import { Link } from 'react-router-dom'
+import { formatCurrency } from '../../services/formatCurrency';
+
 
 const OrderScreen = () => {
 
@@ -54,7 +56,7 @@ const OrderScreen = () => {
                                                         <span className='font-semibold'>Số lương</span>: {item.quantity}
                                                     </p>
                                                     <p>
-                                                        <span className='font-semibold'>Đơn giá</span>: {item.product.price}
+                                                        <span className='font-semibold'>Đơn giá</span>: {formatCurrency(item.product.price)}
                                                     </p>
                                                 </div>
 
@@ -66,7 +68,7 @@ const OrderScreen = () => {
                                     {order.ghnCode}
                                 </td>
                                 <td className="border-b border-slate-700 py-10 px-4 text-center">
-                                    {order.total}
+                                    {formatCurrency(order.total)}
                                 </td>
                                 <td className="border-b border-slate-700 py-10 px-4 text-center">
                                     {order.status}
