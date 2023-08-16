@@ -131,7 +131,7 @@ const OrderAdminScreen = () => {
                                     </td>
 
                                     <td className="border-b border-slate-700 py-10 px-4 text-center">
-                                        {order.total}
+                                        {formatCurrency(order.total)}
                                     </td>
                                     <td className="border-b border-slate-700 py-10 px-4 text-center">
                                         {order.status}
